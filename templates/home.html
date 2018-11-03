@@ -19,15 +19,15 @@
         <h2>Bay Area Commuting Made Fast and Simple</h2>
     </div>
 
-	<form action="/login" method="POST">
-        <div id="login">
+	<form action="/route" method="POST">
+        <div id="route">
             <div id="login-screen">
                 <form class="form-signin">
                     <label><b>Current Location</b></label>
-                    <input id="currentLocationTextField" type="email" name="email" class="form-control" placeholder="Current Location" required autofocus>
+                    <input id="currentLocationTextField" name='currentLocation' placeholder="Current Location" required autofocus>
                     <br></br>
                     <label><b>Destination</b></label>
-                    <input id = "destinationTextField" type="password" name="password" class="form-control" placeholder="Destination" required>
+                    <input id="destinationTextField" name='destination' placeholder="Destination" required>
                     <br></br>
                     <button type="submit">Calculate Route!</button>
                 </form>
@@ -43,10 +43,6 @@
         </div>
     </form>
 
-    <!-- https://developers.google.com/maps/documentation/javascript/places-autocomplete -->
-
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGPqfNcowbyMyUwhF9YNxL2qU4GdnpVwg&libraries=places">
-    </script>
 
 
 
@@ -71,9 +67,59 @@
 
 		  // The map, centered at Uluru
 		  var map = new google.maps.Map(
-		      document.getElementById('map'), {zoom: 12, center: berkeley});
+		      document.getElementById('map'), {zoom: 10, center: berkeley});
+
 		  // The marker, positioned at Uluru
 		  var marker = new google.maps.Marker({position: berkeley, map: map});
+
+          var cLocAutocomplete = new google.maps.places.Autocomplete(document.getElementById('currentLocationTextField'));
+          var destAutocomplete = new google.maps.places.Autocomplete(document.getElementById('destinationTextField'));
+
+          // Defines a rough rectangular bound that represents the bay area 
+          // and biases+restricts autocomplete searches to locations in this area
+          var sw = {lat: 37.34545, lng: -123.0387};
+          var ne = {lat: 38.167, lng: -121.6578}; 
+          var searchBounds = new google.maps.LatLngBounds(sw, ne);
+          cLocAutocomplete.setOptions({bounds: searchBounds, strictBounds: true});
+          destAutocomplete.setOptions({bounds: searchBounds, strictBounds: true});
+
+          cLocAutocomplete.setFields(['address_components', 'geometry', 'icon', 'name']);
+          destAutocomplete.setFields(['address_components', 'geometry', 'icon', 'name']);
+
+          function setupAutocompleteListener(autocomplete) {
+              autocomplete.addListener('place_changed', function() {
+                  marker.setVisible(false);
+                  var place = autocomplete.getPlace();
+                  if (!place.geometry) {
+                    // User entered the name of a Place that was not suggested and
+                    // pressed the Enter key, or the Place Details request failed.
+                    window.alert("No details available for input: '" + place.name + "'");
+                    return;
+                  }
+
+                  // If the place has a geometry, then present it on a map.
+                  if (place.geometry.viewport) {
+                    map.fitBounds(place.geometry.viewport);
+                  } else {
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(17);  
+                  }
+                  marker.setPosition(place.geometry.location);
+                  marker.setVisible(true);
+
+                  var address = '';
+                  if (place.address_components) {
+                    address = [
+                      (place.address_components[0] && place.address_components[0].short_name || ''),
+                      (place.address_components[1] && place.address_components[1].short_name || ''),
+                      (place.address_components[2] && place.address_components[2].short_name || '')
+                    ].join(' ');
+                  }
+                });
+          }
+
+          setupAutocompleteListener(cLocAutocomplete);
+          setupAutocompleteListener(destAutocomplete); 
 		}
     </script>
     <!--Load the API from the specified URL
@@ -81,9 +127,11 @@
     * The key parameter will contain your own API key (which is not needed for this tutorial)
     * The callback parameter executes the initMap() function
     -->
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGPqfNcowbyMyUwhF9YNxL2qU4GdnpVwg&callback=initMap">
-    </script>
+
+        <!-- https://developers.google.com/maps/documentation/javascript/places-autocomplete -->
+
+     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGPqfNcowbyMyUwhF9YNxL2qU4GdnpVwg&libraries=places&callback=initMap"
+        async defer></script>
 
 <!-- https://developers.google.com/maps/documentation/javascript/adding-a-google-map -->
 
