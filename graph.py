@@ -1,5 +1,8 @@
 from collections import defaultdict
 from heapq import *
+from bart_api import get_travel_time as b_get_travel_time
+from google_maps_api import*
+from uber_api import get_travel_time as u_get_travel_time
 import time
 
 #from uber_api import get_travel_time
@@ -51,11 +54,20 @@ def generate_edge_weights(nodes, transport_modes):
         for j, n2 in enumerate(nodes[i:]):
             w = calculate_best_weight(n, n2, transport_modes)
             edges.append((n, n2, w))
-    print edges
     g = defaultdict(list)
     for l,r,c in edges:
         g[l].append((c,r))
     return g
+
+
+
+class Node:
+    def __init__(self, lat, lon, bart):
+        self.lat = lat
+        self.lon = lon
+        self.isBart = bart
+        self.times = []
+
 
 # This function returns the lowest weight between two nodes among the
 # potential modes of transportation.
@@ -67,6 +79,7 @@ def generate_edge_weights(nodes, transport_modes):
 #   [type integer]
 #   weight of edge in seconds
 def calculate_best_weight(s, e, tm):
+    t = time.time()
     funcs = [
         walk_helper,
         bike_helper,
@@ -76,26 +89,43 @@ def calculate_best_weight(s, e, tm):
         bart_helper
     ]
     weights = \
-        [(f(s, e) if tm[i] else float('inf')) for i, f in enumerate(funcs)]
+        [(f(s, e, t) if tm[i] else float('inf')) for i, f in enumerate(funcs)]
     return min(weights)
 
-def walk_helper(node1, node2):
-    return 1
 
-def bike_helper(node1, node2):
-    return 2
+def walk_helper(node1, node2, time):
+    n1 = (node1.lat, node1.lon)
+    n2 = (node2.lat, node2.lon)
+    return walk_travel_time(n1, n2)
 
-def car_helper(node1, node2):
-    return 3
 
-def uber_helper(node1, node2):
-    return 4
+def bike_helper(node1, node2, time):
+    n1 = (node1.lat, node1.lon)
+    n2 = (node2.lat, node2.lon)
+    return bike_travel_time(n1, n2)
 
-def lyft_helper(node1, node2):
-    return 5
 
-def bart_helper(node1, node2):
-    return 6
+
+def car_helper(node1, node2, time):
+    n1 = (node1.lat, node1.lon)
+    n2 = (node2.lat, node2.lon)
+    return car_travel_time(n1, n2)
+
+
+def uber_helper(node1, node2, time):
+    return u_get_travel_time(node1.lat, node1.lon, node2.lat, node2.lon)
+
+
+def lyft_helper():
+    return
+
+def bart_helper(node1, node2, time): #time arrived at node1
+
+    n1 = get_nearest_station(node1.lat, node1.lon)
+    n2 = get_nearest_station(node2.lat, node2.lon)
+    time = b_get_travel_time(time, n1, n2)
+    return time
+    
 
 if __name__ == "__main__":
     edges = [
@@ -114,17 +144,20 @@ if __name__ == "__main__":
     nodes = ["A", "B", "C", "D", "E", "F", "G"]
     transport_modes = [1, 1, 1, 1, 1, 1]
 
-    print "=== Dijkstra Test ==="
+    print("=== Dijkstra Test ===")
     edge_weights = generate_edge_weights(nodes, transport_modes)
-    print edge_weights
-    print "A -> E:"
-    print dijkstra("A", "E", edge_weights)
-    print "F -> G:"
-    print dijkstra("F", "G", edge_weights)
+    print(edge_weights)
+    print("A -> E:")
+    print(dijkstra("A", "E", edge_weights))
+    print("F -> G:")
+    print(dijkstra("F", "G", edge_weights))
 
-    print "=== Optimal Route Test ==="
+    print("=== Optimal Route Test ===")
     now = time.time()
-    print calculate_best_weight(nodes[0], nodes[1], transport_modes)
+    print(calculate_best_weight(nodes[0], nodes[1], transport_modes))
     #edges = generate_edge_weights(nodes, transport_modes)
-    #print edges
+    #print(edges
     #print get_optimal_route(now, nodes, transport_modes)
+
+
+
