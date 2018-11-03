@@ -6,7 +6,7 @@ from uber_api import get_travel_time as u_get_travel_time
 import time
 
 #from uber_api import get_travel_time
-#from bart_api import get_nearest_station, get_destination_station, get_travel_time
+from bart_api import get_nearest_station, get_travel_time
 
 def get_optimal_route(now, nodes, transport_modes):
     weights = generate_edge_weights(nodes, transport_modes)
@@ -96,35 +96,40 @@ def calculate_best_weight(s, e, tm):
 def walk_helper(node1, node2, time):
     n1 = (node1.lat, node1.lon)
     n2 = (node2.lat, node2.lon)
-    return walk_travel_time(n1, n2)
+    print("walk_helper_result:{}".format(walk_travel_time(n1, n2)[1]))
+    return walk_travel_time(n1, n2)[1]
 
 
 def bike_helper(node1, node2, time):
     n1 = (node1.lat, node1.lon)
     n2 = (node2.lat, node2.lon)
-    return bike_travel_time(n1, n2)
+    print("bike_travel_result:{}".format(bike_travel_time(n1, n2)[1]))
+    return bike_travel_time(n1, n2)[1]
 
 
 
 def car_helper(node1, node2, time):
     n1 = (node1.lat, node1.lon)
     n2 = (node2.lat, node2.lon)
-    return car_travel_time(n1, n2)
+    print("car_travel_result:{}".format(car_travel_time(n1, n2)[1]))
+    return car_travel_time(n1, n2)[1]
 
 
 def uber_helper(node1, node2, time):
-    return u_get_travel_time(node1.lat, node1.lon, node2.lat, node2.lon)
+    return u_get_travel_time(node1.lat, node1.lon, node2.lat, node2.lon)[1]
 
 
-def lyft_helper():
-    return
+def lyft_helper(node1, node2, time):
+    return float("inf")
 
 def bart_helper(node1, node2, time): #time arrived at node1
-
     n1 = get_nearest_station(node1.lat, node1.lon)
     n2 = get_nearest_station(node2.lat, node2.lon)
-    time = b_get_travel_time(time, n1, n2)
-    return time
+    if n1 == n2:
+        return 0
+    t = b_get_travel_time(time, n1[1], n2[1])
+    print(t)
+    return t[0]
     
 
 if __name__ == "__main__":
@@ -141,7 +146,11 @@ if __name__ == "__main__":
         ("E", "G", 9),
         ("F", "G", 11)
     ]
-    nodes = ["A", "B", "C", "D", "E", "F", "G"]
+    n1 = Node(37.8716, -122.272, 1)
+    n2 = Node(37.7749, -122.4194, 1)
+    n3 = Node(37.8512, -122.3131, 1)
+    n4 = Node(37.8012, -122.3010, 1)
+    nodes = [n1, n2, n3, n4]
     transport_modes = [1, 1, 1, 1, 1, 1]
 
     print("=== Dijkstra Test ===")

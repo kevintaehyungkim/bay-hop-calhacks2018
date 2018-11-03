@@ -46,9 +46,13 @@ def get_nearest_station(latitude, longitude):
 
 def get_travel_time(current_time, start_station_abbr, end_station_abbr):
 	travel_times_arr = []
+	upcoming_bart_rides = None
 	try:
 		upcoming_bart_rides = json.loads(urllib.request.urlopen("http://api.bart.gov/api/sched.aspx?cmd=arrive&orig={0}&dest={1}&date=now&key=MW9S-E7SL-26DU-VV8V&b=0&a=4&l=1&json=y".format(start_station_abbr, end_station_abbr)).read().decode("utf-8"))["root"]["schedule"]["request"]["trip"]
-		
+	except:
+		print("BART API Request Error")
+
+	if upcoming_bart_rides:
 		for bart_ride in upcoming_bart_rides:
 			bart_ride_time = bart_ride["@origTimeMin"]
 			bart_ride_time_split = bart_ride_time.split()
@@ -65,9 +69,9 @@ def get_travel_time(current_time, start_station_abbr, end_station_abbr):
 			bart_epoch = int(time.mktime(time.strptime(bart_date, pattern)))
 
 			if bart_epoch > current_time:
-				travel_times_arr.append([bart_ride["@origTimeMin"], bart_ride["@destTimeMin"], ])
-	except:
-		print("BART API Request Error")
+				#travel_times_arr.append([bart_ride["@origTimeMin"], bart_ride["@destTimeMin"], ])
+
+				travel_times_arr.append([current_time, bart_epoch, ])
 
 	return travel_times_arr
 
