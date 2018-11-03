@@ -9,6 +9,21 @@ app = Flask(__name__)
 def home():
     return render_template('home.html')
 
+@app.route('/route', methods=['POST'])
+def route():
+	if request.method == 'POST':
+		form = request.form
+		cLoc = form['currentLocation']
+		dest = form['destination']
+		print(cLoc)
+		print(dest)
+		# routing.py calls
+		results = {'start': cLoc, 'end': dest}
+		return render_template('results.html', results=results)
+	else:
+		return redirect(url_for('home'))
+
+
 if __name__ == '__main__':
    app.run()
 

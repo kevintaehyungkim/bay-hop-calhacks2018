@@ -19,15 +19,15 @@
         <h2>Bay Area Commuting Made Fast and Simple</h2>
     </div>
 
-	<form action="/login" method="POST">
-        <div id="login">
+	<form action="/route" method="POST">
+        <div id="route">
             <div id="login-screen">
                 <form class="form-signin">
                     <label><b>Current Location</b></label>
-                    <input id="currentLocationTextField" placeholder="Current Location" required autofocus>
+                    <input id="currentLocationTextField" name='currentLocation' placeholder="Current Location" required autofocus>
                     <br></br>
                     <label><b>Destination</b></label>
-                    <input id = "destinationTextField" placeholder="Destination" required>
+                    <input id="destinationTextField" name='destination' placeholder="Destination" required>
                     <br></br>
                     <button type="submit">Calculate Route!</button>
                 </form>
