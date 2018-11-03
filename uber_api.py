@@ -37,7 +37,7 @@ def get_uber_travel_time(start_latitude, start_longitude, end_latitude, end_long
 	return [fastest_ride_option, trip_durations[fastest_ride_option]]
 
 
-print(get_travel_time(37.7798, -122.403, 37.8716, -122.258423))
+# print(get_uber_travel_time(37.7798, -122.403, 37.8716, -122.258423))
 
 
 # https://developer.lyft.com/v1/reference#availability-driver-eta

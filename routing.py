@@ -5,7 +5,7 @@ from flask import Markup
 from flask import Flask, flash, redirect, url_for, request, render_template, json, session, abort
 
 from uber_api import get_uber_travel_time
-from bart_api import get_nearest_station, get_destination_station, get_bart_travel_time
+from bart_api import get_nearest_station, get_bart_travel_time, get_stations_between, get_station_coordinates
 
 import time
 
@@ -18,8 +18,6 @@ END_COORDINATES = []
 
 # INDEX: WALK, BIKE, CAR, UBER, LYFT, BART
 MEANS_OF_TRANSPORATION = []
-
-
 
 ROUTE_NODES = []
 
@@ -34,7 +32,7 @@ def calculate_route(current, destination, travel_means):
 	TRAVEL_MEANS = travel_means
 	# START_COORDINATES = #
 	# END_COORDINATES = #
-	#generate_nodes
+	generate_nodes(current, destination)
 	#process_nodes
 	return 
 
@@ -42,19 +40,18 @@ def calculate_route(current, destination, travel_means):
 def generate_nodes(START_COORDINATES, END_COORDINATES): 
 	# starting location (first node)
 	ROUTE_NODES.append(START_COORDINATES)
-
-
 	# if no need to take bart, add that in later 
 	start_station = get_nearest_station(START_COORDINATES[0], START_COORDINATES[1])
 	end_station = get_nearest_station(END_COORDINATES[0], END_COORDINATES[1])
-	stations_between = get_stations_between(start_station, end_station)
+	stations_between = get_stations_between(start_station[1], end_station[1])
+	station_coordinates = get_station_coordinates(stations_between)
 
-	ROUTE_NODES.append(stations_between)
-
+	for station_coordinate in station_coordinates:
+		ROUTE_NODES.append(station_coordinate)
 
 	ROUTE_NODES. append(END_COORDINATES)
 
-	generate_graph(route_nodes)
+	generate_graph (route_nodes)
 
 
 # Generates directed graph based on input nodes
@@ -75,24 +72,24 @@ def process_graph(route_nodes):
 
 # Returns the total travel time (wait time + travel time) from starting 
 # location to destination via uber
-def uber_travel_time(start, destination):
-	print (start)
-	print(destination)
-	return get_travel_time(start[0], start[1], destination[0], destination[1])
+# def uber_travel_time(start, destination):
+# 	print (start)
+# 	print(destination)
+# 	return get_travel_time(start[0], start[1], destination[0], destination[1])
 
-# Returns travel time to reach the destination via walking
-def walk_travel_time(start, destination):
-	return
+# # Returns travel time to reach the destination via walking
+# def walk_travel_time(start, destination):
+# 	return
 
-# Returns travel time to reach the destination via bike 
-def bike_travel_time(start, destination):
-	return
+# # Returns travel time to reach the destination via bike 
+# def bike_travel_time(start, destination):
+# 	return
 
-# Returns a nested array containing departure and arrival times of the
-# next three bart rides from starting station to the destination station
-# Input: Strings of the abbreviations for starting station and end station
-def bart_travel_time(station_start, station_end):
-	return get_travel_times(station_start, station_end)
+# # Returns a nested array containing departure and arrival times of the
+# # next three bart rides from starting station to the destination station
+# # Input: Strings of the abbreviations for starting station and end station
+# def bart_travel_time(station_start, station_end):
+# 	return get_travel_times(station_start, station_end)
 
 
 # uber wait duration
@@ -110,6 +107,6 @@ def bart_travel_time(station_start, station_end):
 # zzz = get_travel_time(nearest_station[1], destination_station[1])
 # print (zzz)
 
-print(uber_travel_time([37.7798, -122.403], [37.8716, -122.258423]))
+print(generate_nodes([37.7798, -122.403], [37.8716, -122.258423]))
 
 

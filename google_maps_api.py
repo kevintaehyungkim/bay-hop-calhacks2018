@@ -10,7 +10,7 @@ GOOGLE_MAPS_API_KEY = config_parser.get('GoogleMapsAPI', 'key')
 gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
 
 # Travel time from start to destination via car
-def car_travel_time(start, destination):
+def car_travel_time(origins, destinations):
 	origin_coord = str(start[0]) + ',' + str(start[1])
 	dest_coord = str(destination[0]) + ',' +str(destination[1])
 
