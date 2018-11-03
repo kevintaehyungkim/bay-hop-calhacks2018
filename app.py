@@ -1,4 +1,5 @@
 from flask import Flask, flash, redirect, url_for, request, render_template, json, session, abort
+import routing
 app = Flask(__name__)
 
 # @app.route('/')
