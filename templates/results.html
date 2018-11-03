@@ -37,8 +37,6 @@
 			var endLng = {{ results.endLng }};
 			var centerLat = Math.min(startLat, endLat) + Math.abs(startLat - endLat)/2;
 			var centerLng = Math.min(startLng, endLng) + Math.abs(startLng - endLng)/2;
-			console.log(centerLat);
-			console.log(centerLng);
 
 		  	// The location of Berkeley
 			var start = {lat: startLat, lng: startLng};
@@ -47,11 +45,17 @@
 
 			// The map, centered at Berkeley
 			var map = new google.maps.Map(
-			  document.getElementById('map'), {zoom: 12, center: center});
+			  document.getElementById('map'), {zoom: 17, center: center});
 
 			// The marker, positioned at Berkeley
 			var smarker = new google.maps.Marker({position: start, map: map, label: 'A'});
 			var dmarker = new google.maps.Marker({position: dest, map: map, label: 'B'});
+
+			var bounds = new google.maps.LatLngBounds();
+			bounds.extend(smarker.getPosition());
+			bounds.extend(dmarker.getPosition());
+
+			map.fitBounds(bounds);
 
 		}    
 
