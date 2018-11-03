@@ -1,0 +1,95 @@
+<html lang="en">
+
+<head>
+    <title>Bay Hopper</title>
+    <!-- <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet"> -->
+    <!-- <link href="../static/styles/home.css" type="text/css" rel="stylesheet"> -->
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='styles/home.css') }}">
+</head>
+
+<body>
+
+<!-- 	add transporation means -->
+<!-- add google maps -->
+
+	<div id="title">
+        <h1>Bay Hopper</h1>
+        <h2>Bay Area Commuting Made Fast and Simple</h2>
+    </div>
+
+	<form action="/login" method="POST">
+        <div id="login">
+            <div id="login-screen">
+                <form class="form-signin">
+                    <label><b>Current Location</b></label>
+                    <input id="currentLocationTextField" type="email" name="email" class="form-control" placeholder="Current Location" required autofocus>
+                    <br></br>
+                    <label><b>Destination</b></label>
+                    <input id = "destinationTextField" type="password" name="password" class="form-control" placeholder="Destination" required>
+                    <br></br>
+                    <button type="submit">Calculate Route!</button>
+                </form>
+            </div>
+            <br></br>
+
+          <!--   <div class="flashes">
+              {% for message in get_flashed_messages() %}
+                <h4>{{ message }}</h4>
+              {% endfor %}
+            </div> -->
+
+        </div>
+    </form>
+
+    <!-- https://developers.google.com/maps/documentation/javascript/places-autocomplete -->
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGPqfNcowbyMyUwhF9YNxL2qU4GdnpVwg&libraries=places">
+    </script>
+
+
+
+
+	<style>
+	   /* Set the size of the div element that contains the map */
+	  #map {
+	    height: 400px;  /* The height is 400 pixels */
+	    width: 100%;  /* The width is the width of the web page */
+	   }
+	</style>
+
+  <body>
+    <h3>My Google Maps Demo</h3>
+    <!--The div element for the map -->
+    <div id="map"></div>
+    <script>
+		// Initialize and add the map
+		function initMap() {
+		  // The location of Uluru
+		  var berkeley = {lat: 37.8716, lng: -122.258423};
+
+		  // The map, centered at Uluru
+		  var map = new google.maps.Map(
+		      document.getElementById('map'), {zoom: 12, center: berkeley});
+		  // The marker, positioned at Uluru
+		  var marker = new google.maps.Marker({position: berkeley, map: map});
+		}
+    </script>
+    <!--Load the API from the specified URL
+    * The async attribute allows the browser to render the page while the API loads
+    * The key parameter will contain your own API key (which is not needed for this tutorial)
+    * The callback parameter executes the initMap() function
+    -->
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGPqfNcowbyMyUwhF9YNxL2qU4GdnpVwg&callback=initMap">
+    </script>
+
+<!-- https://developers.google.com/maps/documentation/javascript/adding-a-google-map -->
+
+
+
+
+</body>	
+
+</html>
