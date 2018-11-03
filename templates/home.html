@@ -23,9 +23,9 @@
         <div id="route">
             <div id="login-screen">
                 <form class="form-signin">
-                    <label><b>Current Location</b></label> 
-                    <input id="currentLocationTextField" name='currentLocation' placeholder="Current Location" required autofocus>
-                    <button id="cloc" onclick="setToCurrentPosition()">Set</button>
+                    <label><b>Start</b></label> 
+                    <input id="startTextField" name='start' placeholder="Start" required autofocus>
+                    <button id="cloc" onclick="setToCurrentPosition()">Current Location</button>
                     <br></br>
                     <label><b>Destination</b></label>
                     <input id="destinationTextField" name='destination' placeholder="Destination" required>
@@ -62,7 +62,7 @@
                 geocoder.geocode({'location': pos}, function(results, status) {
                     if (status === 'OK') {
                         if (results[0]) {
-                            document.getElementById('currentLocationTextField').value = results[0].formatted_address;
+                            document.getElementById('startTextField').value = results[0].formatted_address;
                         } else {
                           window.alert('No results found');
                         }
@@ -75,7 +75,7 @@
         }
 		// Initialize and add the map
 		function initMap() {
-          var cLocAutocomplete = new google.maps.places.Autocomplete(document.getElementById('currentLocationTextField'));
+          var startAutocomplete = new google.maps.places.Autocomplete(document.getElementById('startTextField'));
           var destAutocomplete = new google.maps.places.Autocomplete(document.getElementById('destinationTextField'));
 
           // if location permissions active
@@ -89,10 +89,10 @@
           var sw = {lat: 37.34545, lng: -123.0387};
           var ne = {lat: 38.167, lng: -121.6578}; 
           var searchBounds = new google.maps.LatLngBounds(sw, ne);
-          cLocAutocomplete.setOptions({bounds: searchBounds, strictBounds: true});
+          startAutocomplete.setOptions({bounds: searchBounds, strictBounds: true});
           destAutocomplete.setOptions({bounds: searchBounds, strictBounds: true});
 
-          cLocAutocomplete.setFields(['address_components', 'geometry', 'icon', 'name']);
+          startAutocomplete.setFields(['address_components', 'geometry', 'icon', 'name']);
           destAutocomplete.setFields(['address_components', 'geometry', 'icon', 'name']);
 
           function setupAutocompleteListener(autocomplete) {
@@ -116,7 +116,7 @@
                 });
           }
 
-          setupAutocompleteListener(cLocAutocomplete);
+          setupAutocompleteListener(startAutocomplete);
           setupAutocompleteListener(destAutocomplete); 
 		}
 
