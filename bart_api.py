@@ -6,9 +6,9 @@ from math import sin, cos, sqrt, atan2, radians, inf
 from configparser import SafeConfigParser
 
 config_parser = SafeConfigParser()
-config_parser.read('api_keys.cfg')
+config_parser.read('station_info.cfg')
 
-BART_API_KEY = config_parser.get('BartAPI', 'key')
+# BART_API_KEY = config_parser.get('BartAPI', 'key')
 RADIUS_EARTH = 6378.137
 
 
@@ -44,7 +44,7 @@ def get_nearest_station(latitude, longitude):
 	return [nearest_station, station_abbreviation, current_shortest_distance]
 
 
-def get_travel_time(current_time, start_station_abbr, end_station_abbr):
+def get_bart_travel_time(current_time, start_station_abbr, end_station_abbr):
 	travel_times_arr = []
 	upcoming_bart_rides = None
 	try:
@@ -81,11 +81,11 @@ def get_stations_between(start_station, dest_station):
 	all_routes = []
 	exchange_stations = {"MCAR", "BAYF", "WOAK"}
 	try:
-		line_1 = json.loads(urllib.request.urlopen("http://api.bart.gov/api/route.aspx?cmd=routeinfo&route={0}&key={1}&json=y".format("1", BART_API_KEY)).read().decode("utf-8"))["root"]["routes"]["route"]["config"]["station"]
-		line_2 = json.loads(urllib.request.urlopen("http://api.bart.gov/api/route.aspx?cmd=routeinfo&route={0}&key={1}&json=y".format("3", BART_API_KEY)).read().decode("utf-8"))["root"]["routes"]["route"]["config"]["station"]
-		line_3 = json.loads(urllib.request.urlopen("http://api.bart.gov/api/route.aspx?cmd=routeinfo&route={0}&key={1}&json=y".format("5", BART_API_KEY)).read().decode("utf-8"))["root"]["routes"]["route"]["config"]["station"]
-		line_4 = json.loads(urllib.request.urlopen("http://api.bart.gov/api/route.aspx?cmd=routeinfo&route={0}&key={1}&json=y".format("7", BART_API_KEY)).read().decode("utf-8"))["root"]["routes"]["route"]["config"]["station"]
-		line_5 = json.loads(urllib.request.urlopen("http://api.bart.gov/api/route.aspx?cmd=routeinfo&route={0}&key={1}&json=y".format("11", BART_API_KEY)).read().decode("utf-8"))["root"]["routes"]["route"]["config"]["station"]
+		line_1 = json.loads(urllib.request.urlopen("http://api.bart.gov/api/route.aspx?cmd=routeinfo&route={0}&key=MW9S-E7SL-26DU-VV8V&json=y".format("1")).read().decode("utf-8"))["root"]["routes"]["route"]["config"]["station"]
+		line_2 = json.loads(urllib.request.urlopen("http://api.bart.gov/api/route.aspx?cmd=routeinfo&route={0}&key=MW9S-E7SL-26DU-VV8V&json=y".format("3")).read().decode("utf-8"))["root"]["routes"]["route"]["config"]["station"]
+		line_3 = json.loads(urllib.request.urlopen("http://api.bart.gov/api/route.aspx?cmd=routeinfo&route={0}&key=MW9S-E7SL-26DU-VV8V&json=y".format("5")).read().decode("utf-8"))["root"]["routes"]["route"]["config"]["station"]
+		line_4 = json.loads(urllib.request.urlopen("http://api.bart.gov/api/route.aspx?cmd=routeinfo&route={0}&key=MW9S-E7SL-26DU-VV8V&json=y".format("7")).read().decode("utf-8"))["root"]["routes"]["route"]["config"]["station"]
+		line_5 = json.loads(urllib.request.urlopen("http://api.bart.gov/api/route.aspx?cmd=routeinfo&route={0}&key=MW9S-E7SL-26DU-VV8V&json=y".format("11")).read().decode("utf-8"))["root"]["routes"]["route"]["config"]["station"]
 
 		lines  = [list(line_1), list(line_2), list(line_3), list(line_4), list(line_5)]
 
@@ -164,22 +164,48 @@ def get_stations_between_helper(current_route, routes, exchange_stations, dest_s
 				continues
 	return 
 
+# Given an array of station abbreviations, return the latitude and longitude for each station in order
+def get_station_coordinates(stations):
+	if not stations:
+		return []
+
+	station_coordinate_arr = []
+
+	for station in stations:
+		station_lat = config_parser.get(station, 'latitude')
+		station_long = config_parser.get(station, 'longitude')
+		station_coordinate_arr.append([station_lat, station_long])
+	
+	return station_coordinate_arr
 
 #################
 ##### TESTS #####
 #################
 
 # GET_STATIONS_BETWEEN
-print(get_stations_between("DBRK", "POWL"))
+# print(get_stations_between("DBRK", "POWL"))
 # print(get_stations_between("DBRK", "ANTC"))
 # print(get_stations_between("WARM", "ANTC"))
 # print(get_stations_between("WARM", "DUBL"))
 # print(get_stations_between("MLBR", "ANTC"))
 
 # GET_TRAVEL_TIME
-print(get_travel_time(time.time(), 'DBRK', 'POWL'))
+# print(get_bart_travel_time(time.time(), 'DBRK', 'POWL'))
 
 # GET_NEAREST_STATION
-print(get_nearest_station(37.8716, -122.258423)) 
+# print(get_nearest_station(37.8716, -122.258423)) 
 # print(get_nearest_station(37.7798, -122.4039)) 
+
+# BART_STATIONS = json.loads(urllib.request.urlopen("http://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&json=y").read().decode("utf-8"))["root"]["stations"]["station"]
+
+# for z in BART_STATIONS:
+# 	print("[" + z['abbr'] + "]")
+# 	print("latitude = " + z['gtfs_latitude'])
+# 	print("longitude = " + z['gtfs_longitude'])
+# 	print("\n")
+
+
+# print(BART_STATIONS)
+
+# print (get_station_coordinates(['POWL', 'MONT', 'EMBR', 'WOAK', '12TH', '19TH', 'MCAR', 'ASHB', 'DBRK']))
 
