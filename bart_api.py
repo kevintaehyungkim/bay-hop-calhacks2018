@@ -44,7 +44,7 @@ def get_nearest_station(latitude, longitude):
 	return [nearest_station, station_abbreviation, current_shortest_distance]
 
 
-def get_travel_time(current_time, start_station_abbr, end_station_abbr):
+def get_bart_travel_time(current_time, start_station_abbr, end_station_abbr):
 	travel_times_arr = []
 	try:
 		upcoming_bart_rides = json.loads(urllib.request.urlopen("http://api.bart.gov/api/sched.aspx?cmd=arrive&orig={0}&dest={1}&date=now&key=MW9S-E7SL-26DU-VV8V&b=0&a=4&l=1&json=y".format(start_station_abbr, end_station_abbr)).read().decode("utf-8"))["root"]["schedule"]["request"]["trip"]

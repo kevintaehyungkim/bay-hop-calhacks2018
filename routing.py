@@ -4,8 +4,8 @@ from flask import Flask
 from flask import Markup
 from flask import Flask, flash, redirect, url_for, request, render_template, json, session, abort
 
-from uber_api import get_travel_time
-from bart_api import get_nearest_station, get_destination_station, get_travel_time
+from uber_api import get_uber_travel_time
+from bart_api import get_nearest_station, get_destination_station, get_bart_travel_time
 
 import time
 
@@ -15,7 +15,12 @@ import time
 CURRENT_TIME = 0
 START_COORDINATES = []
 END_COORDINATES = []
-TRAVEL_MEANS = []
+
+# INDEX: WALK, BIKE, CAR, UBER, LYFT, BART
+MEANS_OF_TRANSPORATION = []
+
+
+
 ROUTE_NODES = []
 
 # Provides the quickest routes from current location to destination using provided travel means
@@ -38,18 +43,24 @@ def generate_nodes(START_COORDINATES, END_COORDINATES):
 	# starting location (first node)
 	ROUTE_NODES.append(START_COORDINATES)
 
-	# generate 2nd node: nearest bart station 
+
+	# if no need to take bart, add that in later 
+	start_station = get_nearest_station(START_COORDINATES[0], START_COORDINATES[1])
+	end_station = get_nearest_station(END_COORDINATES[0], END_COORDINATES[1])
+	stations_between = get_stations_between(start_station, end_station)
+
+	ROUTE_NODES.append(stations_between)
 
 
-
-	# last bart station, if different from end coordinates
-
-
-	# generate last node: destination
 	ROUTE_NODES. append(END_COORDINATES)
+
+	generate_graph(route_nodes)
+
 
 # Generates directed graph based on input nodes
 def generate_graph(route_nodes):
+
+
 	return 
 
 # Process directed graph to find the quickest route to destination
