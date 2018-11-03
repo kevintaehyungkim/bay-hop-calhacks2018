@@ -1,3 +1,5 @@
+import json
+import urllib
 import googlemaps
 from datetime import datetime
 from configparser import SafeConfigParser
@@ -9,68 +11,88 @@ GOOGLE_MAPS_API_KEY = config_parser.get('GoogleMapsAPI', 'key')
 
 gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
 
-# Travel time from start to destination via car
+
+
+# Travel time from origins to destinations via car
+# origins/destinations are arrays of tuples of latitude/longitude pairs
 def car_travel_time(origins, destinations):
-	# origin_coord = str(start[0]) + ',' + str(start[1])
-	# dest_coord = str(destination[0]) + ',' +str(destination[1])
 
-	now = datetime.now()
-	directions_result = gmaps.directions("37.8716|37.5483",
-	                                     "-122.258423|-121.9886",
-	                                     mode="driving",
-	                                     avoid="ferries",
-	                                     traffic_model= 'pessimistic',
-	                                     departure_time=now
-	                                    )
+	origins_str = ""
+	destinations_str = ""
+	car_travel_time_arr = []
 
-	print(directions_result)
+	for origin in origins:
+		origins_str += "" + str(origin[0]) + "," + str(origin[1]) + "|"
 
-	distance = directions_result[0]['legs'][0]['distance']['text']
-	travel_time = directions_result[0]['legs'][0]['duration']['text']
+	for destination in destinations:
+		destinations_str += "" + str(destination[0]) + "," + str(destination[1]) + "|"
 
-	return distance, travel_time
+	origins_str = origins_str[:-1]
+	destinations_str = destinations_str[:-1]
 
+	query = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + origins_str + "&destinations=" + destinations_str + "mode=driving&key=" + GOOGLE_MAPS_API_KEY
 
-# Travel time from start to destination via biking
-def bike_travel_time(start,destination):
-	origin_coord = str(start[0]) + ',' + str(start[1])
-	dest_coord = str(destination[0]) + ',' +str(destination[1])
+	data = json.loads(urllib.request.urlopen(query).read().decode("utf-8"))["rows"]
 
-	now = datetime.now()
-	directions_result = gmaps.directions(str(origin_coord),
-	                                     str(dest_coord),
-	                                     mode="bicycling",
-	                                     traffic_model= 'pessimistic',
-	                                     departure_time=now
-	                                    )
+	for d in data:
+		car_travel_time_arr.append(d["elements"][0]["duration"]["text"])
 
-	distance = directions_result[0]['legs'][0]['distance']['text']
-	travel_time = directions_result[0]['legs'][0]['duration']['text']
-
-	return distance, travel_time
+	return car_travel_time_arr
 
 
-# Travel time from start to destination via walking
-def walk_travel_time(start, destination):
-	origin_coord = str(start[0]) + ',' + str(start[1])
-	dest_coord = str(destination[0]) + ',' +str(destination[1])
+# Travel time from origins to destinations via biking
+# origins/destinations are arrays of tuples of latitude/longitude pairs
+def bike_travel_time(origins, destinations):
+	origins_str = ""
+	destinations_str = ""
+	bike_travel_time_arr = []
 
-	now = datetime.now()
-	directions_result = gmaps.directions(str(origin_coord),
-	                                     str(dest_coord),
-	                                     mode="walking",
-	                                     avoid="ferries",
-	                                     traffic_model= 'pessimistic',
-	                                     departure_time=now
-	                                    )
+	for origin in origins:
+		origins_str += "" + str(origin[0]) + "," + str(origin[1]) + "|"
 
-	distance = directions_result[0]['legs'][0]['distance']['text']
-	travel_time = directions_result[0]['legs'][0]['duration']['text']
+	for destination in destinations:
+		destinations_str += "" + str(destination[0]) + "," + str(destination[1]) + "|"
 
-	return distance, travel_time
+	origins_str = origins_str[:-1]
+	destinations_str = destinations_str[:-1]
+
+	query = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + origins_str + "&destinations=" + destinations_str + "&mode=bicycling&key=" + GOOGLE_MAPS_API_KEY
+
+	data = json.loads(urllib.request.urlopen(query).read().decode("utf-8"))["rows"]
+
+	for d in data:
+		bike_travel_time_arr.append(d["elements"][0]["duration"]["text"])
+
+	return bike_travel_time_arr
 
 
-print(car_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
+# Travel time from origins to destinations via walking
+# origins/destinations are arrays of tuples of latitude/longitude pairs
+def walk_travel_time(origins, destinations):
+	origins_str = ""
+	destinations_str = ""
+	walk_travel_time_arr = []
+
+	for origin in origins:
+		origins_str += "" + str(origin[0]) + "," + str(origin[1]) + "|"
+
+	for destination in destinations:
+		destinations_str += "" + str(destination[0]) + "," + str(destination[1]) + "|"
+
+	origins_str = origins_str[:-1]
+	destinations_str = destinations_str[:-1]
+
+	query = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + origins_str + "&destinations=" + destinations_str + "&mode=walking&key=" + GOOGLE_MAPS_API_KEY
+
+	data = json.loads(urllib.request.urlopen(query).read().decode("utf-8"))["rows"]
+
+	for d in data:
+		walk_travel_time_arr.append(d["elements"][0]["duration"]["text"])
+
+	return walk_travel_time_arr
+
+
+print(walk_travel_time([[37.8716, -122.258423],[37.8716, -122.258423]], [[37.7798, -122.4039],[37.7798, -122.4039]]))
 # print(bike_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
 # print(walk_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
 
