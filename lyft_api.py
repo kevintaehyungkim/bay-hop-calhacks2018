@@ -47,6 +47,10 @@ def get_lyft_pickup_time(start_latitude, start_longitude, ride_type=None):
 			return [fastest_ride_option, etas[fastest_ride_option]]
 		else:
 			return ['No rides available', float('inf')]
+	else:
+		print(response.status_code)
+		print(response.json.get('error'))
+		print(response.json.get('error_description'))
 
 print(get_lyft_pickup_time(37.7798, -122.403))
 
