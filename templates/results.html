@@ -10,8 +10,57 @@
 </head>
 
 <body>
-<h1>{{results.start}}</h1>
-<h1>{{results.end}}</h1>
+
+	<h1>Start: {{results.start}}</h1>
+	<h1>Destination: {{results.end}}</h1>
+
+
+	<style>
+	   /* Set the size of the div element that contains the map */
+	  #map {
+	    height: 400px;  /* The height is 400 pixels */
+	    width: 100%;  /* The width is the width of the web page */
+	   }
+	</style>
+
+	<!--The div element for the map -->
+	<div id="map"></div>
+
+
+
+	<script>
+		// Initialize and add the map
+		function initMap() {
+			var startLat = {{ results.startLat }};
+			var startLng = {{ results.startLng }};
+			var endLat = {{ results.endLat }};
+			var endLng = {{ results.endLng }};
+			var centerLat = Math.min(startLat, endLat) + Math.abs(startLat - endLat)/2;
+			var centerLng = Math.min(startLng, endLng) + Math.abs(startLng - endLng)/2;
+			console.log(centerLat);
+			console.log(centerLng);
+
+		  	// The location of Berkeley
+			var start = {lat: startLat, lng: startLng};
+			var dest = {lat: endLat, lng: endLng};
+			var center = {lat: centerLat, lng: centerLng};
+
+			// The map, centered at Berkeley
+			var map = new google.maps.Map(
+			  document.getElementById('map'), {zoom: 12, center: center});
+
+			// The marker, positioned at Berkeley
+			var smarker = new google.maps.Marker({position: start, map: map, label: 'A'});
+			var dmarker = new google.maps.Marker({position: dest, map: map, label: 'B'});
+
+		}    
+
+
+	</script>
+
+     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGPqfNcowbyMyUwhF9YNxL2qU4GdnpVwg&libraries=places&callback=initMap"
+        async defer></script>
+
 </body>	
 
 </html>

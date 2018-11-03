@@ -19,7 +19,8 @@ def route():
 		print(cLoc)
 		print(dest)
 		# routing.py calls
-		results = {'start': cLoc, 'end': dest}
+
+		results = {'start': cLoc, 'end': dest, 'startLat': 37.869388, 'startLng': -122.26231, 'endLat': 37.827348, 'endLng': -122.257482}
 		return render_template('results.html', results=results)
 	else:
 		return redirect(url_for('home'))

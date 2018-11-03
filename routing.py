@@ -51,7 +51,7 @@ def generate_nodes(START_COORDINATES, END_COORDINATES):
 
 	ROUTE_NODES. append(END_COORDINATES)
 
-	generate_graph (route_nodes)
+	generate_graph(ROUTE_NODES)
 
 
 # Generates directed graph based on input nodes
