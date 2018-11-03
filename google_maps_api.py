@@ -11,17 +11,19 @@ gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
 
 # Travel time from start to destination via car
 def car_travel_time(origins, destinations):
-	origin_coord = str(start[0]) + ',' + str(start[1])
-	dest_coord = str(destination[0]) + ',' +str(destination[1])
+	# origin_coord = str(start[0]) + ',' + str(start[1])
+	# dest_coord = str(destination[0]) + ',' +str(destination[1])
 
 	now = datetime.now()
-	directions_result = gmaps.directions(str(origin_coord),
-	                                     str(dest_coord),
+	directions_result = gmaps.directions("37.8716|37.5483",
+	                                     "-122.258423|-121.9886",
 	                                     mode="driving",
 	                                     avoid="ferries",
 	                                     traffic_model= 'pessimistic',
 	                                     departure_time=now
 	                                    )
+
+	print(directions_result)
 
 	distance = directions_result[0]['legs'][0]['distance']['text']
 	travel_time = directions_result[0]['legs'][0]['duration']['text']
@@ -69,8 +71,8 @@ def walk_travel_time(start, destination):
 
 
 print(car_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
-print(bike_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
-print(walk_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
+# print(bike_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
+# print(walk_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
 
 
 # import simplejson, urllib
