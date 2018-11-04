@@ -117,7 +117,7 @@ def process_graph(route_nodes):
 # print (zzz)
 
 
-# print(calculate_route([37.7798, -122.403], [37.8716, -122.258423],[1,1,1,1,1,1]))
+print(calculate_route([37.7798, -122.403], [37.8716, -122.258423],[1,1,1,1,1,1]))
 
 # print(generate_nodes([37.7798, -122.403], [37.8716, -122.258423]))
 

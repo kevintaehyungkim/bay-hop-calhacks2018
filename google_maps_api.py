@@ -70,10 +70,6 @@ def bike_travel_time(origins, destinations):
 # Travel time from origins to destinations via walking
 # origins/destinations are arrays of tuples of latitude/longitude pairs
 def walk_travel_time(origins, destinations):
-
-	print(origins)
-	print(destinations)
-
 	origins_str = ""
 	destinations_str = ""
 	walk_travel_time_arr = []

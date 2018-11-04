@@ -52,7 +52,7 @@ def get_lyft_pickup_time(start_latitude, start_longitude, ride_type=None):
 		print(response.json.get('error'))
 		print(response.json.get('error_description'))
 
-print(get_lyft_pickup_time(37.7798, -122.403))
+# print(get_lyft_pickup_time(37.7798, -122.403))
 
 
 

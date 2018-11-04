@@ -20,8 +20,6 @@ def generate_min_travel_times(current_epoch_time, all_coordinates, travel_means)
 			station_abbr_arr.append(get_nearest_station(float(all_coordinates[i][0]), float(all_coordinates[i][1]))[1])
 
 		bart_coordinates = all_coordinates[1:-1]
-		# print(all_coordinates)
-		# print(station_abbr_arr)
 
 		bart_coordinate_dict = {}
 
@@ -31,7 +29,6 @@ def generate_min_travel_times(current_epoch_time, all_coordinates, travel_means)
 				bart_coordinate_dict[bart_pair_str] = [bart_coordinates[i], bart_coordinates[j]]
 
 		min_travel_time_dict = {}
-
 
 		first_bart_station_departure_times = get_bart_travel_time(current_epoch_time, station_abbr_arr[0], station_abbr_arr[1])
 
@@ -54,7 +51,7 @@ def generate_min_travel_times(current_epoch_time, all_coordinates, travel_means)
 			uber_time_to_first_bart = get_uber_travel_time(all_coordinates[0][0], all_coordinates[0][1], bart_coordinates[0][0], bart_coordinates[0][1])[1]
 
 		if travel_means[4]:
-			lyft = get_lyft_pickup_time(all_coordinates[0][0], all_coordinates[0][1])[1] + parseEpoch(car_travel_time([[all_coordinates[0][0], all_coordinates[0][1]]], [[bart_coordinates[0][0], bart_coordinates[0][1]]])[0])
+			lyft_time_to_first_bart = get_lyft_pickup_time(all_coordinates[0][0], all_coordinates[0][1])[1] + parseEpoch(car_travel_time([[all_coordinates[0][0], all_coordinates[0][1]]], [[bart_coordinates[0][0], bart_coordinates[0][1]]])[0])
 
 		first_bart_time = float("inf")
 
@@ -97,6 +94,95 @@ def generate_min_travel_times(current_epoch_time, all_coordinates, travel_means)
 				min_travel_time_dict[key] = [min_travel_time, 'B']
 			else:
 				min_travel_time_dict[key] = [min_travel_time, 'C']
+
+		start_coordinate = all_coordinates[0]
+		end_coordinate = all_coordinates[len(all_coordinates)-1]
+
+		abbreviations = []
+		abbreviations.append('S')
+
+		for i in range(1,len(all_coordinates)-1):
+			coordinate = all_coordinates[i]
+			station_abbr = get_nearest_station(float(coordinate[0]), float(coordinate[1]))[1]
+			abbreviations.append(station_abbr)
+
+		abbreviations.append('E')
+
+
+		for i in range (1,len(all_coordinates)):
+
+			next_coordinate = all_coordinates[i]
+
+			# from start to all upcoming series of coordinates
+			walk_time_from_start = parseEpoch(walk_travel_time([[start_coordinate[0], start_coordinate[1]]], [[next_coordinate[0], next_coordinate[1]]])[0])
+			bike_time_from_start = float("inf")
+			car_time_from_start = float("inf")
+			uber_time_from_start = float("inf")
+			lyft_time_from_start = float("inf")
+
+			if travel_means[1]:
+				bike_time_from_start = parseEpoch(bike_travel_time([[all_coordinates[0][0], all_coordinates[0][1]]], [[next_coordinate[0], next_coordinate[1]]])[0])
+
+			if travel_means[2]:
+				car_time_from_start = parseEpoch(car_travel_time([[all_coordinates[0][0], all_coordinates[0][1]]], [[next_coordinate[0], next_coordinate[1]]])[0])
+
+			if travel_means[3]:
+				uber_time_from_start = get_uber_travel_time(start_coordinate[0], start_coordinate[1], next_coordinate[0], next_coordinate[1])[1]
+
+			if travel_means[4]:
+				lyft_time_from_start = get_lyft_pickup_time(start_coordinate[0], start_coordinate[1])[1] + parseEpoch(car_travel_time([[start_coordinate[0], start_coordinate[1]]], [[next_coordinate[0], next_coordinate[1]]])[0])
+
+			min_travel_time = min([walk_time_from_start, bike_time_from_start, car_time_from_start, uber_time_from_start, lyft_time_from_start])
+
+			key_pair = 'S ' + abbreviations[i]
+
+			if min_travel_time == walk_time_from_start:
+				min_travel_time_dict[key_pair] = [min_travel_time, 'W']
+			elif min_travel_time == bike_time_from_start:
+				min_travel_time_dict[key_pair] = [min_travel_time, 'BK']
+			elif min_travel_time == car_time_from_start:
+				min_travel_time_dict[key_pair] = [min_travel_time, 'C']
+			elif min_travel_time == uber_time_from_start:
+				min_travel_time_dict[key_pair] = [min_travel_time, 'U']
+			elif min_travel_time == lyft_time_from_start:
+				min_travel_time_dict[key_pair] = [min_travel_time, 'L']
+
+
+			# from next coordinate to end
+			if i < len(all_coordinates)-1:
+				walk_time_to_end = parseEpoch(walk_travel_time([[next_coordinate[0], next_coordinate[1]]], [[end_coordinate[0], end_coordinate[1]]])[0])
+				bike_time_to_end = float("inf")
+				car_time_to_end = float("inf")
+				uber_time_to_end = float("inf")
+				lyft_time_to_end = float("inf")
+
+				if travel_means[1]:
+					bike_time_to_end = parseEpoch(bike_travel_time([[next_coordinate[0], next_coordinate[1]]], [[end_coordinate[0], end_coordinate[1]]])[0])
+
+				if travel_means[2]:
+					car_time_to_end = parseEpoch(car_travel_time([[next_coordinate[0], next_coordinate[1]]], [[end_coordinate[0], end_coordinate[1]]])[0])
+
+				if travel_means[3]:
+					uber_time_to_end = get_uber_travel_time(next_coordinate[0], next_coordinate[1], end_coordinate[0], end_coordinate[1])[1]
+
+				if travel_means[4]:
+					lyft_time_to_end = get_lyft_pickup_time(next_coordinate[0], next_coordinate[1])[1] + parseEpoch(car_travel_time([[next_coordinate[0], next_coordinate[1]]], [[end_coordinate[0], end_coordinate[1]]])[0])
+
+				min_travel_time = min([walk_time_to_end, bike_time_to_end, car_time_to_end, uber_time_to_end, lyft_time_to_end])
+
+				key_pair = abbreviations[i] + ' E'
+
+				if min_travel_time == walk_time_to_end:
+					min_travel_time_dict[key_pair] = [min_travel_time, 'W']
+				elif min_travel_time == bike_time_to_end:
+					min_travel_time_dict[key_pair] = [min_travel_time, 'BK']
+				elif min_travel_time == car_time_to_end:
+					min_travel_time_dict[key_pair] = [min_travel_time, 'C']
+				elif min_travel_time == uber_time_to_end:
+					min_travel_time_dict[key_pair] = [min_travel_time, 'U']
+				elif min_travel_time == lyft_time_to_end:
+					min_travel_time_dict[key_pair] = [min_travel_time, 'L']
+
 
 		print (min_travel_time_dict)
 		return min_travel_time_dict
@@ -178,20 +264,22 @@ def generate_min_travel_times(current_epoch_time, all_coordinates, travel_means)
 def dp_reader(dictionary_weights, zzz):
 
 	nodes = []
-	for z in zzz:
+	nodes.append(Node('S'))
+
+	for i in range(1,len(zzz)-1):
+		z = zzz[i]
 		station_abbr = get_nearest_station(float(z[0]), float(z[1]))[1]
 		nodes.append(Node(station_abbr))
 
+	nodes.append(Node('E'))
+
 	path = numpy.zeros(len(nodes))
 	trans = [[] for i in range(len(nodes))]
-
-	path[1] = get_time(dictionary_weights, "S", nodes[1].name)
-
 	trans[0] = []
+	path[1] = get_time(dictionary_weights, "S", nodes[1].name)
 	temp = ("S " + nodes[1].name, get_means(dictionary_weights, "S", nodes[1].name))
 	trans[1] = [temp]
 	for i in range(2,len(nodes)):
-
 		minCost = float("inf")
 		minMethod = []
 		curr = nodes[i].name
@@ -202,47 +290,19 @@ def dp_reader(dictionary_weights, zzz):
 				minCost = temp_path
 				minMethod = trans[j].copy()
 				minMethod.append((prev + " " + curr, get_means(dictionary_weights, prev, curr)))
+				
 		path[i] = minCost
 		trans[i] = minMethod
-
 
 	return path[-1], trans[-1]
 
 def get_time(dictionary_weights, start, end):
 	value = dictionary_weights[start + " " + end]
 	return value[0]
+
 def get_means(dictionary_weights, start, end):
 	value = dictionary_weights[start + " " + end]
 	return value[1]
-
-
-class Node:
-	def __init__(self, name):
-		self.name = name
-
-
-
-# if __name__ == "__main__":
-# 	dic = {}
-
-# 	nodes = [Node("S"), Node("B"), Node("C"), Node("D"), Node("E")]
-
-# 	dic["S B"] = (2, "BI")
-# 	dic["S C"] = (1, "C")
-# 	dic["S D"] = (4, "BA")
-# 	dic["S E"] = (8, "BA")
-# 	dic["B C"] = (6, "C")
-# 	dic["B D"] = (3, "BA")a
-# 	dic["B E"] = (5, "BI")
-# 	dic["C D"] = (1, "C")
-# 	dic["C E"] = (6, "BA")
-# 	dic["D E"] = (2, "BA")
-
-# 	print(dp_reader(dic, nodes))
-
-
-
-
 
 def parseEpoch(text):
 	parts = text.split(' ')
@@ -255,6 +315,14 @@ def parseEpoch(text):
 	else:
 		raise Exception('fuck')
 	return time
+
+# Class Node
+# includes name of node as a string
+# "S" - Start, "DBRK" - Abbreviation of BART station, "E" - End
+class Node:
+	def __init__(self, name):
+		self.name = name
+
 
 
 
