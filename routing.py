@@ -54,6 +54,10 @@ def generate_graph(START_COORDINATES, END_COORDINATES, TRAVEL_MEANS):
 	ROUTE_NODES. append(END_COORDINATES)
 
 	min_travel_times = generate_min_travel_times(CURRENT_TIME, ROUTE_NODES, TRAVEL_MEANS)
+
+	print(dp_reader(min_travel_times, ROUTE_NODES))
+
+
 	# edges = generate_edges(nodes, TRAVEL_MEANS)
 	return 
 
@@ -113,7 +117,7 @@ def process_graph(route_nodes):
 # print (zzz)
 
 
-print(calculate_route([37.7798, -122.403], [37.8716, -122.258423],[1,1,1,1,1,1]))
+# print(calculate_route([37.7798, -122.403], [37.8716, -122.258423],[1,1,1,1,1,1]))
 
 # print(generate_nodes([37.7798, -122.403], [37.8716, -122.258423]))
 
