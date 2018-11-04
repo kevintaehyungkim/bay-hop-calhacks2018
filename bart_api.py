@@ -81,7 +81,7 @@ def get_bart_travel_time(current_epoch_time, start_station_abbr, end_station_abb
 			pattern = '%m/%d/%Y %H:%M:%S'
 			bart_epoch = int(time.mktime(time.strptime(bart_date, pattern)))
 
-			if bart_epoch > current_epoch_time:
+			if bart_epoch >= current_epoch_time:
 				travel_times_arr.append([bart_ride["@origTimeMin"], bart_ride["@destTimeMin"], ])
 
 		for i in range(len(travel_times_arr)):
@@ -206,6 +206,41 @@ def get_station_coordinates(stations):
 	
 	return station_coordinate_arr
 
+# return two lists of arrival times
+def get_arrival_times(current_time, stations):
+	arrival_times = [[], []]
+	length = len(stations)
+	if length == 0:
+		return arrival_times
+
+	travel_times = get_bart_travel_time(current_time, stations[0], stations[1])
+
+	arrival_times[0].append(travel_times[0][0])
+	arrival_times[1].append(travel_times[1][0])
+
+	time1 = travel_times[0][1]
+	time2 = travel_times[1][1]
+	for i in range(1, length-1):
+		travel_times1 = get_bart_travel_time(time1, stations[i], stations[i+1])
+		travel_times2 = get_bart_travel_time(time2, stations[i], stations[i+1])
+
+		arrival_times[0].append(travel_times1[0][0])
+		arrival_times[1].append(travel_times2[0][0])
+
+		time1 = travel_times1[0][1]
+		time2 = travel_times2[0][1]
+
+	print()
+	for time in arrival_times[0]:
+		print(datetime.datetime.fromtimestamp(time))
+
+	print()
+
+	for time in arrival_times[1]:
+		print(datetime.datetime.fromtimestamp(time))
+
+	return arrival_times
+
 #################
 ##### TESTS #####
 #################
@@ -219,7 +254,7 @@ def get_station_coordinates(stations):
 
 # GET_TRAVEL_TIME
 # print (time.time())
-print(get_bart_travel_time(time.time(), 'DBRK', 'POWL'))
+# print(get_bart_travel_time(1541305980, '19TH', 'MCAR'))
 # print(time.time())
 
 # GET_NEAREST_STATION
@@ -238,4 +273,6 @@ print(get_bart_travel_time(time.time(), 'DBRK', 'POWL'))
 # print(BART_STATIONS)
 
 # print (get_station_coordinates(['POWL', 'MONT', 'EMBR', 'WOAK', '12TH', '19TH', 'MCAR', 'ASHB', 'DBRK']))
+
+get_arrival_times(time.time(), ['POWL', 'MONT', 'EMBR', 'WOAK', '12TH', '19TH', 'MCAR', 'ASHB', 'DBRK'])
 
