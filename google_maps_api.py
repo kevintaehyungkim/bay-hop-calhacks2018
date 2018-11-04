@@ -91,8 +91,20 @@ def walk_travel_time(origins, destinations):
 
 	return walk_travel_time_arr
 
+def geocode(address):
+	addressparts = address.split(' ')
+	address_str = ''
+	for part in addressparts:
+		address_str += part + '+'
+	address_str = address_str[:-1]
+	query = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address_str + "&key=" + GOOGLE_MAPS_API_KEY
+
+	data = json.loads(urllib.request.urlopen(query).read().decode("utf-8"))["results"][0]['geometry']['location']
+	return (data['lat'], data['lng'])
+
 
 print(walk_travel_time([[37.8716, -122.258423],[37.8716, -122.258423]], [[37.7798, -122.4039],[37.7798, -122.4039]]))
+geocode('Berkeley, CA')
 # print(bike_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
 # print(walk_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
 

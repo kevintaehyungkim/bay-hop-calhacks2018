@@ -1,0 +1,35 @@
+.bay-hop {
+	display: inline-block;
+	width: 100%;
+}
+
+#header {
+	height: 25%;
+}
+
+#content{
+	height: 75%;
+	padding: 12px;
+}
+
+#results{
+	width: 50%;
+	height: 100%;
+	float: left;
+}
+
+#results-wrapper{
+	margin: auto;
+	width: 200px;
+	height: 200px;
+}
+
+#map {
+	width: 50%;
+	height: 50%;
+	float: right;
+}
+
+input {
+	margin: 2px;
+}

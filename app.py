@@ -1,5 +1,6 @@
 from flask import Flask, flash, redirect, url_for, request, render_template, json, session, abort
 import routing
+import google_maps_api
 app = Flask(__name__)
 
 # @app.route('/')
@@ -14,12 +15,17 @@ def home():
 def route():
 	if request.method == 'POST':
 		form = request.form
-		cLoc = form['currentLocation']
+		start = form['start']
 		dest = form['destination']
-		print(cLoc)
+		geocodeStart = google_maps_api.geocode(start)
+		geocodeDest = google_maps_api.geocode(dest)
+		print(start)
 		print(dest)
+		print(geocodeStart)
+		print(geocodeDest)
 		# routing.py calls
-		results = {'start': cLoc, 'end': dest}
+
+		results = {'start': start, 'end': dest, 'startLat': geocodeStart[0], 'startLng': geocodeStart[1], 'endLat': geocodeDest[0], 'endLng': geocodeDest[1]}
 		return render_template('results.html', results=results)
 	else:
 		return redirect(url_for('home'))

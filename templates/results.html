@@ -6,12 +6,77 @@
     <!-- <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet"> -->
     <!-- <link href="../static/styles/home.css" type="text/css" rel="stylesheet"> -->
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='styles/home.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='styles/results.css') }}">
 </head>
 
 <body>
-<h1>{{results.start}}</h1>
-<h1>{{results.end}}</h1>
+	<div id="header" class="bay-hop">
+		<h1>Bay Hop</h1>
+	</div>
+	<div id="content" class="bay-hop">
+		<div id="results" class="bay-hop">
+			<div id="results-wrapper">
+				<div id="addresses" class="bay-hop">
+					<input type='text' value="{{results.start}}"></input> <br>
+					<input type='text' value="{{results.end}}"></input>
+				</div>
+				<div id="transportation-modes" class="bay-hop"></div>
+				<div id="directions" class="bay-hop">
+					<ol>
+						<li>Open Laptop</li>
+						<li>Go to Gradescope</li>
+						<li>Check Midterm Grades</li>
+						<li>Die a little</li>
+						<li>Open weekly HW</li>
+						<li>Die more</li>
+						<li>Close Laptop</li>
+						<li>Cry yourself to sleep</li>
+						<li>Repeat and season to taste</li>
+					</ol>
+				</div>
+			</div>
+		</div>
+		<div id="map" class="bay-hop"></div>
+	</div>
+
+
+	<script>
+		// Initialize and add the map
+		function initMap() {
+			var startLat = {{ results.startLat }};
+			var startLng = {{ results.startLng }};
+			var endLat = {{ results.endLat }};
+			var endLng = {{ results.endLng }};
+			var centerLat = Math.min(startLat, endLat) + Math.abs(startLat - endLat)/2;
+			var centerLng = Math.min(startLng, endLng) + Math.abs(startLng - endLng)/2;
+
+		  	// The location of Berkeley
+			var start = {lat: startLat, lng: startLng};
+			var dest = {lat: endLat, lng: endLng};
+			var center = {lat: centerLat, lng: centerLng};
+
+			// The map, centered at Berkeley
+			var map = new google.maps.Map(
+			  document.getElementById('map'), {zoom: 17, center: center});
+
+			// The marker, positioned at Berkeley
+			var smarker = new google.maps.Marker({position: start, map: map, label: 'A'});
+			var dmarker = new google.maps.Marker({position: dest, map: map, label: 'B'});
+
+			var bounds = new google.maps.LatLngBounds();
+			bounds.extend(smarker.getPosition());
+			bounds.extend(dmarker.getPosition());
+
+			map.fitBounds(bounds);
+
+		}    
+
+
+	</script>
+
+     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGPqfNcowbyMyUwhF9YNxL2qU4GdnpVwg&libraries=places&callback=initMap"
+        async defer></script>
+
 </body>	
 
 </html>
