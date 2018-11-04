@@ -6,6 +6,7 @@ from flask import Flask, flash, redirect, url_for, request, render_template, jso
 
 from uber_api import get_uber_travel_time
 from bart_api import get_nearest_station, get_bart_travel_time, get_stations_between, get_station_coordinates
+from graph import *
 
 import time
 
@@ -17,7 +18,7 @@ START_COORDINATES = []
 END_COORDINATES = []
 
 # INDEX: WALK, BIKE, CAR, UBER, LYFT, BART
-MEANS_OF_TRANSPORATION = []
+MEANS_OF_TRANSPORATION = [0,0,0,0,0,0]
 
 ROUTE_NODES = []
 
@@ -29,15 +30,15 @@ def calculate_route(current, destination, travel_means):
 	# destination: destination address
 	# travel_means: array of travel methods selected by the user
 	CURRENT_TIME = time.time()
-	TRAVEL_MEANS = travel_means
+	# MEANS_OF_TRANSPORATION = travel_means
 	# START_COORDINATES = #
 	# END_COORDINATES = #
-	generate_nodes(current, destination)
+	generate_nodes(current, destination, travel_means)
 	#process_nodes
 	return 
 
 # Generates nodes based on start and end coordinates provided
-def generate_nodes(START_COORDINATES, END_COORDINATES): 
+def generate_nodes(START_COORDINATES, END_COORDINATES, TRAVEL_MEANS): 
 	# starting location (first node)
 	ROUTE_NODES.append(START_COORDINATES)
 	# if no need to take bart, add that in later 
@@ -51,14 +52,18 @@ def generate_nodes(START_COORDINATES, END_COORDINATES):
 
 	ROUTE_NODES. append(END_COORDINATES)
 
-	generate_graph(ROUTE_NODES)
+	print("all_stations")
+	print(ROUTE_NODES)
+
+	generate_graph(CURRENT_TIME, ROUTE_NODES, TRAVEL_MEANS)
 
 
 # Generates directed graph based on input nodes
-def generate_graph(route_nodes):
+# def generate_graph(route_nodes):
 
 
-	return 
+
+# 	return 
 
 # Process directed graph to find the quickest route to destination
 def process_graph(route_nodes):
@@ -107,6 +112,9 @@ def process_graph(route_nodes):
 # zzz = get_travel_time(nearest_station[1], destination_station[1])
 # print (zzz)
 
-print(generate_nodes([37.7798, -122.403], [37.8716, -122.258423]))
+
+print(calculate_route([37.7798, -122.403], [37.8716, -122.258423],[0,1,1,0,1,0]))
+
+# print(generate_nodes([37.7798, -122.403], [37.8716, -122.258423]))
 
 

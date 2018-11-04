@@ -103,8 +103,8 @@ def geocode(address):
 	return (data['lat'], data['lng'])
 
 
-print(walk_travel_time([[37.8716, -122.258423],[37.8716, -122.258423]], [[37.7798, -122.4039],[37.7798, -122.4039]]))
-geocode('Berkeley, CA')
+# print(walk_travel_time([[37.8716, -122.258423],[37.8716, -122.258423]], [[37.7798, -122.4039],[37.7798, -122.4039]]))
+# geocode('Berkeley, CA')
 # print(bike_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
 # print(walk_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
 
