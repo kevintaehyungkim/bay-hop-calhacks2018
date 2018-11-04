@@ -43,16 +43,34 @@ def get_nearest_station(latitude, longitude):
 
 	return [nearest_station, station_abbreviation, current_shortest_distance]
 
-
-def get_bart_travel_time(current_time, start_station_abbr, end_station_abbr):
+# Inputs: current epoch time, starting station abbreviation, end station abbreviation
+# Returns: An array of index-2 arrays containing start and end epoch time of journey (up to next 2 departures)
+def get_bart_travel_time(current_epoch_time, start_station_abbr, end_station_abbr):
 	travel_times_arr = []
+	current_date_time = time.localtime(current_epoch_time)
+
+	if current_date_time.tm_hour >= 12:
+		if current_date_time.tm_min < 10:
+			current_time_str = "" + str(current_date_time.tm_hour - 12) + ":" + "0" + str(current_date_time.tm_min) + "pm"
+		else:
+			current_time_str = "" + str(current_date_time.tm_hour - 12) + ":" + str(current_date_time.tm_min) + "pm"
+	else:
+		if current_date_time.tm_min < 10:
+			current_time_str = "" + str(current_date_time.tm_hour) + ":" + "0" + str(current_date_time.tm_min) + "am"
+		else:
+			current_time_str = "" + str(current_date_time.tm_hour) + ":" + str(current_date_time.tm_min) + "am"
+
+	print(current_time_str)
+
 	try:
-		upcoming_bart_rides = json.loads(urllib.request.urlopen("http://api.bart.gov/api/sched.aspx?cmd=arrive&orig={0}&dest={1}&date=now&key=MW9S-E7SL-26DU-VV8V&b=0&a=4&l=1&json=y".format(start_station_abbr, end_station_abbr)).read().decode("utf-8"))["root"]["schedule"]["request"]["trip"]
+		upcoming_bart_rides = json.loads(urllib.request.urlopen("http://api.bart.gov/api/sched.aspx?cmd=depart&orig={0}&dest={1}&time={2}&date=now&key=MW9S-E7SL-26DU-VV8V&b=0&a=2&l=0&json=y".format(start_station_abbr, end_station_abbr, current_time_str)).read().decode("utf-8"))["root"]["schedule"]["request"]["trip"]
 		
 		for bart_ride in upcoming_bart_rides:
 			bart_ride_time = bart_ride["@origTimeMin"]
 			bart_ride_time_split = bart_ride_time.split()
 			bart_ride_date = bart_ride["@origTimeDate"]
+
+			print(bart_ride_time_split[0])
 
 			if bart_ride_time_split[1] == 'PM':
 				bart_ride_time_split = bart_ride_time_split[0].split(':')
@@ -64,8 +82,23 @@ def get_bart_travel_time(current_time, start_station_abbr, end_station_abbr):
 			pattern = '%m/%d/%Y %H:%M:%S'
 			bart_epoch = int(time.mktime(time.strptime(bart_date, pattern)))
 
-			if bart_epoch > current_time:
+			if bart_epoch > current_epoch_time:
 				travel_times_arr.append([bart_ride["@origTimeMin"], bart_ride["@destTimeMin"], ])
+
+		for i in range(len(travel_times_arr)):
+			for j in range(len(travel_times_arr[i])):
+				bart_ride_time_split = travel_times_arr[i][j].split()
+				if bart_ride_time_split[1] == 'PM':
+					bart_ride_time_split = bart_ride_time_split[0].split(':')
+					bart_ride_time_split[0] = str(int(bart_ride_time_split[0]) + 12)
+				else:
+					bart_ride_time_split = bart_ride_time_split[0].split(':')
+
+				bart_date = bart_ride_date + str(bart_ride_time_split[0]) + ':' + str(bart_ride_time_split[1]) + ":" + "00"
+				pattern = '%m/%d/%Y %H:%M:%S'
+				bart_epoch = int(time.mktime(time.strptime(bart_date, pattern)))
+
+				travel_times_arr[i][j] = bart_epoch
 	except:
 		print("BART API Request Error")
 
@@ -186,7 +219,9 @@ def get_station_coordinates(stations):
 # print(get_stations_between("MLBR", "ANTC"))
 
 # GET_TRAVEL_TIME
-# print(get_bart_travel_time(time.time(), 'DBRK', 'POWL'))
+# print (time.time())
+print(get_bart_travel_time(time.time(), 'DBRK', 'POWL'))
+# print(time.time())
 
 # GET_NEAREST_STATION
 # print(get_nearest_station(37.8716, -122.258423)) 
