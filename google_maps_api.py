@@ -33,10 +33,9 @@ def car_travel_time(origins, destinations):
 	query = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + origins_str + "&destinations=" + destinations_str + "mode=driving&key=" + GOOGLE_MAPS_API_KEY
 
 	data = json.loads(urllib.request.urlopen(query).read().decode("utf-8"))["rows"]
-
+	# print(data)
 	for d in data:
 		car_travel_time_arr.append(d["elements"][0]["duration"]["text"])
-
 	return car_travel_time_arr
 
 
@@ -92,7 +91,7 @@ def walk_travel_time(origins, destinations):
 	return walk_travel_time_arr
 
 
-print(walk_travel_time([[37.8716, -122.258423],[37.8716, -122.258423]], [[37.7798, -122.4039],[37.7798, -122.4039]]))
+# print(walk_travel_time([[37.8716, -122.258423],[37.8716, -122.258423]], [[37.7798, -122.4039],[37.7798, -122.4039]]))
 # print(bike_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
 # print(walk_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
 

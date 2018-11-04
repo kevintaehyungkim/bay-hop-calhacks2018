@@ -56,6 +56,8 @@ def get_bart_travel_time(current_time, start_station_abbr, end_station_abbr):
 		for bart_ride in upcoming_bart_rides:
 			bart_ride_time = bart_ride["@origTimeMin"]
 			bart_ride_time_split = bart_ride_time.split()
+			bart_ride_time_dest = bart_ride["@destTimeMin"]
+			bart_ride_time_split_dest = bart_ride_time_dest.split()
 			bart_ride_date = bart_ride["@origTimeDate"]
 
 			if bart_ride_time_split[1] == 'PM':
@@ -63,17 +65,47 @@ def get_bart_travel_time(current_time, start_station_abbr, end_station_abbr):
 				bart_ride_time_split[0] = str(int(bart_ride_time_split[0]) + 12)
 			else:
 				bart_ride_time_split = bart_ride_time_split[0].split(':')
+			if bart_ride_time_split_dest[1] == 'PM':
+				bart_ride_time_split_dest = bart_ride_time_split_dest[0].split(':')
+				bart_ride_time_split_dest[0] = str(int(bart_ride_time_split_dest[0]) + 12)
+			else:
+				bart_ride_time_split_dest = bart_ride_time_split_dest[0].split(':')
 
 			bart_date = bart_ride_date + str(bart_ride_time_split[0]) + ':' + str(bart_ride_time_split[1]) + ":" + "00"
+			bart_date_dest= bart_ride_date + str(bart_ride_time_split_dest[0]) + ':' + str(bart_ride_time_split_dest[1]) + ":" + "00"
+		
 			pattern = '%m/%d/%Y %H:%M:%S'
 			bart_epoch = int(time.mktime(time.strptime(bart_date, pattern)))
+			bart_epoch_dest = int(time.mktime(time.strptime(bart_date_dest, pattern)))
 
 			if bart_epoch > current_time:
-				#travel_times_arr.append([bart_ride["@origTimeMin"], bart_ride["@destTimeMin"], ])
-
-				travel_times_arr.append([current_time, bart_epoch, ])
+				# travel_times_arr.append([bart_ride["@origTimeMin"], bart_ride["@destTimeMin"], ])
+				travel_times_arr.append([bart_epoch, bart_epoch_dest, ])
+				#travel_times_arr.append([current_time, bart_epoch, ])
 
 	return travel_times_arr
+	# if upcoming_bart_rides:
+	# 	for bart_ride in upcoming_bart_rides:
+	# 		bart_ride_time = bart_ride["@origTimeMin"]
+	# 		bart_ride_time_split = bart_ride_time.split()
+	# 		bart_ride_date = bart_ride["@origTimeDate"]
+
+	# 		if bart_ride_time_split[1] == 'PM':
+	# 			bart_ride_time_split = bart_ride_time_split[0].split(':')
+	# 			bart_ride_time_split[0] = str(int(bart_ride_time_split[0]) + 12)
+	# 		else:
+	# 			bart_ride_time_split = bart_ride_time_split[0].split(':')
+
+	# 		bart_date = bart_ride_date + str(bart_ride_time_split[0]) + ':' + str(bart_ride_time_split[1]) + ":" + "00"
+	# 		pattern = '%m/%d/%Y %H:%M:%S'
+	# 		bart_epoch = int(time.mktime(time.strptime(bart_date, pattern)))
+
+	# 		if bart_epoch > current_time:
+	# 			travel_times_arr.append([bart_ride["@origTimeMin"], bart_ride["@destTimeMin"], ])
+
+	# 			#travel_times_arr.append([current_time, bart_epoch, ])
+
+	# return travel_times_arr
 
 
 # Returns a list of BART stations in between the start and end station
@@ -190,7 +222,7 @@ def get_station_coordinates(stations):
 # print(get_stations_between("MLBR", "ANTC"))
 
 # GET_TRAVEL_TIME
-# print(get_bart_travel_time(time.time(), 'DBRK', 'POWL'))
+#print(get_bart_travel_time(time.time(), 'DBRK', 'POWL'))
 
 # GET_NEAREST_STATION
 # print(get_nearest_station(37.8716, -122.258423)) 
