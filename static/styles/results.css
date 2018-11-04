@@ -3,8 +3,16 @@
 	width: 100%;
 }
 
+body {
+	background-image: url("/static/images/Gradient.png");
+}
+
 #header {
-	height: 25%;
+	margin-top: 10%;
+	margin-bottom: 0;
+	margin-left: 10%;
+	color: white;
+	font-family: "Lato"
 }
 
 #content{
@@ -19,14 +27,15 @@
 }
 
 #results-wrapper{
-	margin: auto;
+	/* margin: auto; */
+	margin-left: 20%;
 	width: 200px;
 	height: 200px;
 }
 
 #map {
 	width: 50%;
-	height: 50%;
+	height: 100%;
 	float: right;
 }
 
