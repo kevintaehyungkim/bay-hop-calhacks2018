@@ -7,6 +7,9 @@
     <!-- <link href="../static/styles/home.css" type="text/css" rel="stylesheet"> -->
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='styles/home.css') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <body>
@@ -14,10 +17,20 @@
 <!-- 	add transporation means -->
 <!-- add google maps -->
 
-	<div id="title">
+	<!-- <div id="title">
         <h1>Bay Hopper</h1>
         <h2>Bay Area Commuting Made Fast and Simple</h2>
-    </div>
+    </div> -->
+  <!-- <div id="title">
+        <img src ="/static/images/Logo.png" alt="BayHop Logo">
+        <h2>Bay Area Commuting Made Fast and Simple</h2>
+  </div> -->
+  <div id="title" class="container">
+      <div class="row center">
+          <img src ="/static/images/Logo.png" alt="BayHop Logo">
+          <h2>Bay Area Commuting Made Fast and Simple</h2>
+      </div>
+  </div>
 
 	<form action="/route" method="POST">
         <div id="route">
@@ -43,19 +56,6 @@
 
         </div>
     </form>
-
-
-	<style>
-	   /* Set the size of the div element that contains the map */
-	  #map {
-	    height: 400px;  /* The height is 400 pixels */
-	    width: 100%;  /* The width is the width of the web page */
-	   }
-	</style>
-
-    <h3>My Google Maps Demo</h3>
-    <!--The div element for the map -->
-    <div id="map"></div>
 
     <script>
         function setToCurrentPosition() {
@@ -142,9 +142,6 @@
         async defer></script>
 
 <!-- https://developers.google.com/maps/documentation/javascript/adding-a-google-map -->
-
-
-
 
 </body>	
 
