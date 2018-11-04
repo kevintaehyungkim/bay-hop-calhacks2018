@@ -30,11 +30,12 @@ def car_travel_time(origins, destinations):
 	origins_str = origins_str[:-1]
 	destinations_str = destinations_str[:-1]
 
-	query = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + origins_str + "&destinations=" + destinations_str + "mode=driving&key=" + GOOGLE_MAPS_API_KEY
+	query = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + origins_str + "&destinations=" + destinations_str + "&mode=driving&key=" + GOOGLE_MAPS_API_KEY
 
 	data = json.loads(urllib.request.urlopen(query).read().decode("utf-8"))["rows"]
 
 	for d in data:
+		# print(d)
 		car_travel_time_arr.append(d["elements"][0]["duration"]["text"])
 
 	return car_travel_time_arr
@@ -69,6 +70,10 @@ def bike_travel_time(origins, destinations):
 # Travel time from origins to destinations via walking
 # origins/destinations are arrays of tuples of latitude/longitude pairs
 def walk_travel_time(origins, destinations):
+
+	print(origins)
+	print(destinations)
+
 	origins_str = ""
 	destinations_str = ""
 	walk_travel_time_arr = []
@@ -104,9 +109,10 @@ def geocode(address):
 
 
 # print(walk_travel_time([[37.8716, -122.258423],[37.8716, -122.258423]], [[37.7798, -122.4039],[37.7798, -122.4039]]))
+print(walk_travel_time([[37.8716, -122.258423]], [[37.7798, -122.4039]]))
 # geocode('Berkeley, CA')
 # print(bike_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
-# print(walk_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
+# print(bike_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
 
 
 # import simplejson, urllib

@@ -64,7 +64,7 @@ def get_bart_travel_time(current_epoch_time, start_station_abbr, end_station_abb
 			current_time_str = "" + str(current_date_time.tm_hour) + ":" + str(current_date_time.tm_min) + "am"
 
 	try:
-		upcoming_bart_rides = json.loads(urllib.request.urlopen("http://api.bart.gov/api/sched.aspx?cmd=depart&orig={0}&dest={1}&time={2}&date=now&key=MW9S-E7SL-26DU-VV8V&b=0&a=2&l=0&json=y".format(start_station_abbr, end_station_abbr, current_time_str)).read().decode("utf-8"))["root"]["schedule"]["request"]["trip"]
+		upcoming_bart_rides = json.loads(urllib.request.urlopen("http://api.bart.gov/api/sched.aspx?cmd=depart&orig={0}&dest={1}&time={2}&date=now&key=MW9S-E7SL-26DU-VV8V&b=0&a=4&l=0&json=y".format(start_station_abbr, end_station_abbr, current_time_str)).read().decode("utf-8"))["root"]["schedule"]["request"]["trip"]
 		
 		for bart_ride in upcoming_bart_rides:
 			bart_ride_time = bart_ride["@origTimeMin"]
@@ -230,15 +230,6 @@ def get_arrival_times(current_time, stations):
 		time1 = travel_times1[0][1]
 		time2 = travel_times2[0][1]
 
-	print()
-	for time in arrival_times[0]:
-		print(datetime.datetime.fromtimestamp(time))
-
-	print()
-
-	for time in arrival_times[1]:
-		print(datetime.datetime.fromtimestamp(time))
-
 	return arrival_times
 
 #################
@@ -274,5 +265,5 @@ def get_arrival_times(current_time, stations):
 
 # print (get_station_coordinates(['POWL', 'MONT', 'EMBR', 'WOAK', '12TH', '19TH', 'MCAR', 'ASHB', 'DBRK']))
 
-get_arrival_times(time.time(), ['POWL', 'MONT', 'EMBR', 'WOAK', '12TH', '19TH', 'MCAR', 'ASHB', 'DBRK'])
+# get_arrival_times(time.time(), ['POWL', 'MONT', 'EMBR', 'WOAK', '12TH', '19TH', 'MCAR', 'ASHB', 'DBRK'])
 

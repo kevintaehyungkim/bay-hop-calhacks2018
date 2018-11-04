@@ -5,6 +5,7 @@ from flask import Markup
 from flask import Flask, flash, redirect, url_for, request, render_template, json, session, abort
 
 from uber_api import get_uber_travel_time
+from lyft_api import *
 from bart_api import get_nearest_station, get_bart_travel_time, get_stations_between, get_station_coordinates
 from graph import *
 
@@ -33,12 +34,12 @@ def calculate_route(current, destination, travel_means):
 	# MEANS_OF_TRANSPORATION = travel_means
 	# START_COORDINATES = #
 	# END_COORDINATES = #
-	generate_nodes(current, destination, travel_means)
+	generate_graph(current, destination, travel_means)
 	#process_nodes
-	return 
+	return "LOLZZZZZZZ"
 
 # Generates nodes based on start and end coordinates provided
-def generate_nodes(START_COORDINATES, END_COORDINATES, TRAVEL_MEANS): 
+def generate_graph(START_COORDINATES, END_COORDINATES, TRAVEL_MEANS): 
 	# starting location (first node)
 	ROUTE_NODES.append(START_COORDINATES)
 	# if no need to take bart, add that in later 
@@ -52,10 +53,9 @@ def generate_nodes(START_COORDINATES, END_COORDINATES, TRAVEL_MEANS):
 
 	ROUTE_NODES. append(END_COORDINATES)
 
-	print("all_stations")
-	print(ROUTE_NODES)
-
-	generate_graph(CURRENT_TIME, ROUTE_NODES, TRAVEL_MEANS)
+	min_travel_times = generate_min_travel_times(CURRENT_TIME, ROUTE_NODES, TRAVEL_MEANS)
+	# edges = generate_edges(nodes, TRAVEL_MEANS)
+	return 
 
 
 # Generates directed graph based on input nodes
@@ -113,7 +113,7 @@ def process_graph(route_nodes):
 # print (zzz)
 
 
-print(calculate_route([37.7798, -122.403], [37.8716, -122.258423],[0,1,1,0,1,0]))
+print(calculate_route([37.7798, -122.403], [37.8716, -122.258423],[1,1,1,1,1,1]))
 
 # print(generate_nodes([37.7798, -122.403], [37.8716, -122.258423]))
 
