@@ -11,7 +11,7 @@ config_parser.read('station_info.cfg')
 # BART_API_KEY = config_parser.get('BartAPI', 'key')
 RADIUS_EARTH = 6378.137
 
-
+# Returns the nearest BART Station given a latitude and longitude
 def get_nearest_station(latitude, longitude):
 	nearest_station = ""
 	station_abbreviation = ""
@@ -253,14 +253,6 @@ def get_arrival_times(current_time, stations):
 # print(get_nearest_station(37.7798, -122.4039)) 
 
 # BART_STATIONS = json.loads(urllib.request.urlopen("http://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&json=y").read().decode("utf-8"))["root"]["stations"]["station"]
-
-# for z in BART_STATIONS:
-# 	print("[" + z['abbr'] + "]")
-# 	print("latitude = " + z['gtfs_latitude'])
-# 	print("longitude = " + z['gtfs_longitude'])
-# 	print("\n")
-
-
 # print(BART_STATIONS)
 
 # print (get_station_coordinates(['POWL', 'MONT', 'EMBR', 'WOAK', '12TH', '19TH', 'MCAR', 'ASHB', 'DBRK']))

@@ -11,32 +11,28 @@ from graph import *
 
 import time
 
-# START_COORDINATES = [37.8716, -122.258423]
-# END_COORDINATES = [37.7798, -122.4039]
-
 CURRENT_TIME = 0
 START_COORDINATES = []
 END_COORDINATES = []
 
 # INDEX: WALK, BIKE, CAR, UBER, LYFT, BART
-MEANS_OF_TRANSPORATION = [0,0,0,0,0,0]
+MEANS_OF_TRANSPORATION = [1,0,0,0,0,0]
 
 ROUTE_NODES = []
 
 # Provides the quickest routes from current location to destination using provided travel means
-def calculate_route(current, destination, travel_means):
-	# convert to coordinates: maybe add method in google maps api to generate coordinates from an address
-	# Inputs -
+# Inputs -
 	# current: current address
 	# destination: destination address
 	# travel_means: array of travel methods selected by the user
+def calculate_route(current, destination, travel_means):
 	CURRENT_TIME = time.time()
 	# MEANS_OF_TRANSPORATION = travel_means
 	# START_COORDINATES = #
 	# END_COORDINATES = #
-	generate_graph(current, destination, travel_means)
+
 	#process_nodes
-	return "LOLZZZZZZZ"
+	return generate_graph(current, destination, travel_means)
 
 # Generates nodes based on start and end coordinates provided
 def generate_graph(START_COORDINATES, END_COORDINATES, TRAVEL_MEANS): 
@@ -51,23 +47,16 @@ def generate_graph(START_COORDINATES, END_COORDINATES, TRAVEL_MEANS):
 	for station_coordinate in station_coordinates:
 		ROUTE_NODES.append(station_coordinate)
 
-	ROUTE_NODES. append(END_COORDINATES)
+	ROUTE_NODES.append(END_COORDINATES)
 
 	min_travel_times = generate_min_travel_times(CURRENT_TIME, ROUTE_NODES, TRAVEL_MEANS)
 
 	print(dp_reader(min_travel_times, ROUTE_NODES))
 
-
 	# edges = generate_edges(nodes, TRAVEL_MEANS)
 	return 
 
 
-# Generates directed graph based on input nodes
-# def generate_graph(route_nodes):
-
-
-
-# 	return 
 
 # Process directed graph to find the quickest route to destination
 def process_graph(route_nodes):
@@ -75,49 +64,9 @@ def process_graph(route_nodes):
 
 
 
-############################################################
-###################### HELPER METHODS ######################
-############################################################
 
-# Returns the total travel time (wait time + travel time) from starting 
-# location to destination via uber
-# def uber_travel_time(start, destination):
-# 	print (start)
-# 	print(destination)
-# 	return get_travel_time(start[0], start[1], destination[0], destination[1])
-
-# # Returns travel time to reach the destination via walking
-# def walk_travel_time(start, destination):
-# 	return
-
-# # Returns travel time to reach the destination via bike 
-# def bike_travel_time(start, destination):
-# 	return
-
-# # Returns a nested array containing departure and arrival times of the
-# # next three bart rides from starting station to the destination station
-# # Input: Strings of the abbreviations for starting station and end station
-# def bart_travel_time(station_start, station_end):
-# 	return get_travel_times(station_start, station_end)
-
-
-# uber wait duration
-# fix bug not as many options depending on location
-# uber_wait_duration = get_wait_duration(START_COORDINATES[0], START_COORDINATES[1], END_COORDINATES[0], END_COORDINATES[1])
-# print(uber_wait_duration)
-
-# nearest_station = get_nearest_station(START_COORDINATES[0], START_COORDINATES[1])
-# print (nearest_station)
-
-# destination_station = get_destination_station(END_COORDINATES[0], END_COORDINATES[1])
-# print(destination_station)
-# #nearest bart station
-
-# zzz = get_travel_time(nearest_station[1], destination_station[1])
-# print (zzz)
-
-
-print(calculate_route([37.7798, -122.403], [37.8716, -122.258423],[1,1,1,1,1,1]))
+print(calculate_route([37.7798, -122.4039], [37.8616, -122.256523],[1,1,0,0,0,1]))
+# print(calculate_route([37.880082, -122.274871], [37.879170, -122.269055],[1,1,0,0,0,1]))
 
 # print(generate_nodes([37.7798, -122.403], [37.8716, -122.258423]))
 
