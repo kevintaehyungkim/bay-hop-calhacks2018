@@ -1,5 +1,6 @@
 from multiprocessing import Process
 from multiprocessing import Pool
+import multiprocessing as mp
 
 
 
@@ -57,26 +58,36 @@ def get_bart_travel_time(a):
 # print(b-a)
 
 
-a = time.time()
-
-zzzz = [time.time()]
-zzzzz = ['DBRK']
-zzzzzz = ['POWL']
-
-pool = Pool(processes=50)  
-bbb = [1,2]*500
-pool.map(get_bart_travel_time, bbb)
-
-
-
-b = time.time()
-print(b-a)
-
-
 # a = time.time()
-# print(get_bart_travel_time('POWL'))
+
+# zzzz = [time.time()]
+# zzzzz = ['DBRK']
+# zzzzzz = ['POWL']
+
+# # num_workers = mp.cpu_count()  
+
+# # pool = mp.Pool(num_workers)
+# # for task in tasks:
+# #     pool.apply_async(target = func, args = (task,))
+# print(mp.cpu_count())
+# pool = Pool(processes=12)  
+
+
+
+# bbb = [1,2]*150
+# pool.map(get_bart_travel_time, bbb)
+
+
+
 # b = time.time()
 # print(b-a)
+
+
+
+a = time.time()
+get_bart_travel_time('POWL')
+b = time.time()
+print(b-a)
 
 
 

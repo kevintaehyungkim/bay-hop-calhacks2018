@@ -26,16 +26,22 @@ ROUTE_NODES = []
 	# destination: destination address
 	# travel_means: array of travel methods selected by the user
 def calculate_route(current, destination, travel_means):
+
+	global CURRENT_TIME
+	global START_COORDINATES
+	global END_COORDINATES
+
 	CURRENT_TIME = time.time()
 	# MEANS_OF_TRANSPORATION = travel_means
-	# START_COORDINATES = #
-	# END_COORDINATES = #
+	START_COORDINATES = current
+	END_COORDINATES = destination
 
 	#process_nodes
-	return generate_graph(current, destination, travel_means)
+	return generate_graph(START_COORDINATES, END_COORDINATES, travel_means)
 
 # Generates nodes based on start and end coordinates provided
 def generate_graph(START_COORDINATES, END_COORDINATES, TRAVEL_MEANS): 
+
 	# starting location (first node)
 	ROUTE_NODES.append(START_COORDINATES)
 	# if no need to take bart, add that in later 
@@ -53,7 +59,6 @@ def generate_graph(START_COORDINATES, END_COORDINATES, TRAVEL_MEANS):
 
 	print(dp_reader(min_travel_times, ROUTE_NODES))
 
-	# edges = generate_edges(nodes, TRAVEL_MEANS)
 	return 
 
 
@@ -64,8 +69,13 @@ def process_graph(route_nodes):
 
 
 
+a = time.time()
+print(calculate_route([37.7798, -122.4039], [37.8616, -122.256523],[1,0,1,1,1,1]))
+b = time.time()
+print(b-a)
 
-print(calculate_route([37.7798, -122.4039], [37.8616, -122.256523],[1,1,0,0,0,1]))
+
+
 # print(calculate_route([37.880082, -122.274871], [37.879170, -122.269055],[1,1,0,0,0,1]))
 
 # print(generate_nodes([37.7798, -122.403], [37.8716, -122.258423]))

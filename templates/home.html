@@ -37,18 +37,27 @@
             <div id="login-screen">
                 <form class="form-signin">
                     <!-- <label><b>Start</b></label>  -->
-                    <input id="startTextField" name='start' placeholder="Start" required autofocus>
+                    <input id="startTextField" name='start' class="form-control" placeholder="Start Location" required autofocus>
                     <!-- <button id="cloc" onclick="setToCurrentPosition()">Current Location</button> -->
                     <br></br>
                     <!-- <label><b>Destination</b></label> -->
-                    <input id="destinationTextField" name='destination' placeholder="Destination" required>
+                    <input id="destinationTextField" name='destination' class="form-control" placeholder="Destination Location" required>
                     <br></br>
-                    <button type="submit" class="btn btn-outline-primary calc">Calculate Route!</button>
+
+                    <!-- <img src ="/static/images/Bike.png" alt="BayHop Logo"> -->
+                    <img src ="/static/images/Uber.png" height="40" alt="BayHop Logo">
+                    <img src ="/static/images/Lyft.png" height="40" alt="BayHop Logo">
+                    <!-- <img src ="/static/images/Bart.png" alt="BayHop Logo"> -->
+                    <img src ="/static/images/Car.png" height="40" alt="BayHop Logo">
+
+                    <br></br>
+
+                    <button type="submit" class="btn btn-outline-primary calc">Calculate Route</button>
                 </form>
             </div>
             <br></br>
-
-          <!--   <div class="flashes">
+<!-- 
+            <div class="flashes">
               {% for message in get_flashed_messages() %}
                 <h4>{{ message }}</h4>
               {% endfor %}

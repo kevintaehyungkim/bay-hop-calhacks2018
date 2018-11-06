@@ -12,6 +12,18 @@ GOOGLE_MAPS_API_KEY = config_parser.get('GoogleMapsAPI', 'key')
 gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
 
 
+def parseEpoch(text):
+		parts = text.split(' ')
+		time = 0
+		if len(parts) == 4:
+			time += int(parts[0]) * 60 * 60
+			time += int(parts[2]) * 60
+		elif len(parts) == 2:
+			time += int(parts[0]) * 60
+		else:
+			raise Exception('text parsing failed')
+		return time
+
 
 # Travel time from origins to destinations via car
 # origins/destinations are arrays of tuples of latitude/longitude pairs
@@ -22,7 +34,7 @@ def car_travel_time(origins, destinations):
 	car_travel_time_arr = []
 
 	for origin in origins:
-		origins_str += "" + str(origin[0]) + "," + str(origin[1]) + "|"
+		origins_str += str(origin[0]) + "," + str(origin[1]) + "|"
 
 	for destination in destinations:
 		destinations_str += "" + str(destination[0]) + "," + str(destination[1]) + "|"
@@ -30,13 +42,18 @@ def car_travel_time(origins, destinations):
 	origins_str = origins_str[:-1]
 	destinations_str = destinations_str[:-1]
 
-	query = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + origins_str + "&destinations=" + destinations_str + "&mode=driving&key=" + GOOGLE_MAPS_API_KEY
+	query = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + origins_str + "&destinations=" + destinations_str + "&departure_time=now" + "&mode=driving&key=" + GOOGLE_MAPS_API_KEY
 
 	data = json.loads(urllib.request.urlopen(query).read().decode("utf-8"))["rows"]
 
 	for d in data:
 		# print(d)
-		car_travel_time_arr.append(d["elements"][0]["duration"]["text"])
+		if "duration_in_traffic" in d["elements"][0].keys():
+			regular_time = parseEpoch(d["elements"][0]["duration"]["text"])
+			traffic_time = parseEpoch(d["elements"][0]["duration_in_traffic"]["text"])
+			car_travel_time_arr.append(regular_time+traffic_time)
+		else:
+			car_travel_time_arr.append(parseEpoch(d["elements"][0]["duration"]["text"]))
 
 	return car_travel_time_arr
 
@@ -62,7 +79,7 @@ def bike_travel_time(origins, destinations):
 	data = json.loads(urllib.request.urlopen(query).read().decode("utf-8"))["rows"]
 
 	for d in data:
-		bike_travel_time_arr.append(d["elements"][0]["duration"]["text"])
+		bike_travel_time_arr.append(parseEpoch(d["elements"][0]["duration"]["text"]))
 
 	return bike_travel_time_arr
 
@@ -88,7 +105,7 @@ def walk_travel_time(origins, destinations):
 	data = json.loads(urllib.request.urlopen(query).read().decode("utf-8"))["rows"]
 
 	for d in data:
-		walk_travel_time_arr.append(d["elements"][0]["duration"]["text"])
+		walk_travel_time_arr.append(parseEpoch(d["elements"][0]["duration"]["text"]))
 
 	return walk_travel_time_arr
 
@@ -105,9 +122,9 @@ def geocode(address):
 
 
 # print(walk_travel_time([[37.8716, -122.258423],[37.8716, -122.258423]], [[37.7798, -122.4039],[37.7798, -122.4039]]))
-# print(car_travel_time([[37.8616, -122.256523]], [[37.7798, -122.4039]]))
+print(car_travel_time([[37.8616, -122.256523]], [[37.7798, -122.4039]]))
 # geocode('Berkeley, CA')
-# print(bike_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
+# print(car_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
 # print(bike_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
 
 
@@ -119,6 +136,8 @@ def geocode(address):
 # driving_time = result['rows'][0]['elements'][0]['duration']['value']
 
 # print(driving_time)
+
+
 
 
 

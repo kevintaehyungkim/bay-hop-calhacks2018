@@ -48,11 +48,16 @@ def get_nearest_station(latitude, longitude):
 
 # Inputs: current epoch time, starting station abbreviation, end station abbreviation
 # Returns: An array of index-2 arrays containing start and end epoch time of journey (up to next 2 departures)
-def get_bart_travel_time(current_epoch_time, start_station_abbr, end_station_abbr):
+def get_bart_travel_time(current_date_time, current_epoch_time, start_station_abbr, end_station_abbr):
 	travel_times_arr = []
-	current_date_time = time.localtime(current_epoch_time)
+	# current_date_time = time.localtime(current_epoch_time)
 
-	if current_date_time.tm_hour >= 12:
+	if current_date_time.tm_hour == 12:
+		if current_date_time.tm_min < 10:
+			current_time_str = "" + str(current_date_time.tm_hour - 12) + ":" + "0" + str(current_date_time.tm_min) + "pm"
+		else:
+			current_time_str = "" + str(current_date_time.tm_hour - 12) + ":" + str(current_date_time.tm_min) + "pm"
+	elif current_date_time.tm_hour >= 12:
 		if current_date_time.tm_min < 10:
 			current_time_str = "" + str(current_date_time.tm_hour - 12) + ":" + "0" + str(current_date_time.tm_min) + "pm"
 		else:
@@ -245,7 +250,10 @@ def get_arrival_times(current_time, stations):
 
 # GET_TRAVEL_TIME
 # print (time.time())
-# print(get_bart_travel_time(1541305980, '19TH', 'MCAR'))
+# print(get_bart_travel_time(1541305980, 'POWL', 'MCAR'))
+# print(get_bart_travel_time(1541305980, 'POWL', 'DBRK'))
+# print(get_bart_travel_time(1541305980, 'POWL', 'WOAK'))
+
 # print(time.time())
 
 # GET_NEAREST_STATION

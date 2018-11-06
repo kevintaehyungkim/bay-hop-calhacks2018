@@ -33,5 +33,19 @@ body{
 
 #login-screen {
 	text-align: center;
+	position: absolute;
+	left: 450px;
+	right: 450px;
+	top: 305px;
+}
 
+/*#route {
+	top:10%;
+}
+*/
+
+button {
+    background-color: #70D8CB; /* Green */
+    color: white !important;
+    font-weight: 400 !important;
 }

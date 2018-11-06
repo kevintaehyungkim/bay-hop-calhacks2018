@@ -8,9 +8,6 @@ from routing import *
 
 app = Flask(__name__)
 
-# @app.route('/')
-# def hello_world():
-#    return "Hello World"
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -25,19 +22,10 @@ def route():
 		geocodeStart = google_maps_api.geocode(start)
 		geocodeDest = google_maps_api.geocode(dest)
 
-		# print(start)
-		# print(dest)
-		# print(geocodeStart)
-		# print(geocodeDest)
-		# routing.py calls
-
 		results = {'start': start, 'end': dest, 'startLat': geocodeStart[0], 'startLng': geocodeStart[1], 'endLat': geocodeDest[0], 'endLng': geocodeDest[1]}
-		
-		print(calculate_route([results['startLat'],results['startLng']], [results['endLat'],results['endLng']], [1,1,1,1,1,1]))
+		route = calculate_route([results['startLat'],results['startLng']], [results['endLat'],results['endLng']], [1,1,1,1,1,1])
 
-
-
-		return render_template('results.html', results=results)
+		return render_template('results.html', results=results, route=route)
 	else:
 		return redirect(url_for('home'))
 
