@@ -18,22 +18,27 @@ config_parser = SafeConfigParser()
 config_parser.read('station_info.cfg')
 
 CURRENT_DATE_TIME = 0
+CURRENT_EPOCH_TIME = 0
 NODES = []
 
 
 def bart_travel_time_helper(a):
 	# print(a)
 	global CURRENT_DATE_TIME
-	a[0][a[1]]= get_bart_travel_time(CURRENT_DATE_TIME, float(a[2][0]), a[2][1], a[2][2])
+	global CURRENT_EPOCH_TIME
+
+	a[0][a[1]] = get_bart_travel_time(CURRENT_DATE_TIME, CURRENT_EPOCH_TIME, a[2], a[3])
 
 
 # travel_means index - WALK, BIKE, CAR, UBER, LYFT, BART
 def generate_min_travel_times(current_epoch_time, all_coordinates, travel_means):
 
 	global CURRENT_DATE_TIME
+	global CURRENT_EPOCH_TIME
 	global NODES
 
 	CURRENT_DATE_TIME = time.localtime(current_epoch_time)
+	CURRENT_EPOCH_TIME = current_epoch_time
 
 	station_abbr_arr = []
 
@@ -56,10 +61,18 @@ def generate_min_travel_times(current_epoch_time, all_coordinates, travel_means)
 	for i in range(0,len(bart_station_coordinates)-1):
 		for j in range(i+1, len(bart_station_coordinates)):
 			bart_coord_pair_str = NODES[i+1] + ' ' + NODES[j+1]
-			bart_coord_pairs.append([bart_travel_time, bart_coord_pair_str, [str(current_epoch_time), NODES[i+1], NODES[j+1]]])
+			bart_coord_pairs.append([bart_travel_time, bart_coord_pair_str, NODES[i+1], NODES[j+1]])
 
 	pool = Pool(processes=12)  
 	pool.map(bart_travel_time_helper, bart_coord_pairs)
+
+	# print(bart_travel_time)
+	# for z in bart_travel_time.keys():
+	# 	vals = bart_travel_time[z]
+	# 	for val in vals:
+	# 		if val[1] - val [0] < 0:
+	# 			print(z)
+	# 			print(val)
 
 
 	if len(all_coordinates) > 2:

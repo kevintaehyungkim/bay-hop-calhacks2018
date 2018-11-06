@@ -68,6 +68,7 @@ def get_bart_travel_time(current_date_time, current_epoch_time, start_station_ab
 		else:
 			current_time_str = "" + str(current_date_time.tm_hour) + ":" + str(current_date_time.tm_min) + "am"
 
+
 	try:
 		upcoming_bart_rides = json.loads(urllib.request.urlopen("http://api.bart.gov/api/sched.aspx?cmd=depart&orig={0}&dest={1}&time={2}&date=now&key=MW9S-E7SL-26DU-VV8V&b=0&a=4&l=0&json=y".format(start_station_abbr, end_station_abbr, current_time_str)).read().decode("utf-8"))["root"]["schedule"]["request"]["trip"]
 		
@@ -92,6 +93,7 @@ def get_bart_travel_time(current_date_time, current_epoch_time, start_station_ab
 		for i in range(len(travel_times_arr)):
 			for j in range(len(travel_times_arr[i])):
 				bart_ride_time_split = travel_times_arr[i][j].split()
+				print(bart_ride_time_split)
 				if bart_ride_time_split[1] == 'PM':
 					bart_ride_time_split = bart_ride_time_split[0].split(':')
 					bart_ride_time_split[0] = str(int(bart_ride_time_split[0]) + 12)
