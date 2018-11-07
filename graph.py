@@ -13,6 +13,7 @@ import multiprocessing as mp
 
 CURRENT_DATE_TIME = 0
 CURRENT_EPOCH_TIME = 0
+ALL_COORD_PAIRS = []
 NODES = []
 
 
@@ -35,7 +36,7 @@ def generate_min_travel_times(current_epoch_time, all_coordinates, travel_means)
 	######
 	######
 
-
+	global ALL_COORD_PAIRS
 	global CURRENT_DATE_TIME
 	global CURRENT_EPOCH_TIME
 	global NODES
@@ -46,10 +47,15 @@ def generate_min_travel_times(current_epoch_time, all_coordinates, travel_means)
 	station_abbr_arr = []
 
 	bart_station_coordinates = all_coordinates[1:-1]
+
 	bart_coord_pairs = []
 	lyft_coord_pairs = []
+
 	bart_coord_pair_time_dict = {}
 	lyft_coord_pair_time_dict = {}
+	car_coord_pair_time_dict = {}
+	walk_coord_pair_time_dict = {}
+	bike_coord_pair_time_dict = {}
 
 	# NODES - abbreviations of all nodes
 	# S - Start, 'DBRK' - BART Station, E - End
@@ -64,14 +70,78 @@ def generate_min_travel_times(current_epoch_time, all_coordinates, travel_means)
 	bart_travel_time = manager.dict()
 	lyft_travel_time = manager.dict()
 
-	# BART TRAVEL TIME
-	if travel_means[5]:
-		for i in range(0,len(bart_station_coordinates)-1):
-			for j in range(i+1, len(bart_station_coordinates)):
-				bart_coord_pair_str = NODES[i+1] + ' ' + NODES[j+1]
-				bart_coord_pairs.append([bart_travel_time, bart_coord_pair_str, NODES[i+1], NODES[j+1]])
-		pool = Pool(processes=12)  
-		pool.map(bart_travel_time_helper, bart_coord_pairs)
+	# WALK TRAVEL TIME
+	coord_keys = []
+	coord_origins = []
+	coord_destinations = []
+	coord_value = []
+
+	for i in range(0,len(all_coordinates)-1):
+		for j in range(i+1,len(all_coordinates)):
+			coordinate_pair = str([float(all_coordinates[i][0]), float(all_coordinates[i][1])]) + ' ' + str([float(all_coordinates[j][0]), float(all_coordinates[j][1])])
+			coord_keys.append(coordinate_pair)
+			coord_origins.append([float(all_coordinates[i][0]), float(all_coordinates[i][1])])
+			coord_destinations.append([float(all_coordinates[j][0]), float(all_coordinates[j][1])])
+
+	walk_travel_times = []
+	for i in range (0,len(coord_origins),10):
+		walk_travel_times = walk_travel_times + walk_travel_time(coord_origins[i:i+10], coord_destinations[i:i+10])
+
+	for i in range (0,len(walk_travel_times)):
+			walk_coord_pair_time_dict[coord_keys[i]] = walk_travel_times[i]
+
+	print("walk")
+
+	# print(walk_travel_times)
+	# print(walk_coord_pair_time_dict)
+
+
+	# BIKE TRAVEL TIME
+	if travel_means[1]:
+		# coord_keys = []
+		# coord_origins = []
+		# coord_destinations = []
+		# coord_value = []
+		# for i in range(0,len(all_coordinates)-1):
+		# 	for j in range(i+1,len(all_coordinates)):
+		# 		coordinate_pair = str(all_coordinates[i]) + ' ' + str(all_coordinates[j])
+		# 		coord_keys.append(coordinate_pair)
+		# 		coord_origins.append([float(all_coordinates[i][0]), float(all_coordinates[i][1])])
+		# 		coord_destinations.append([float(all_coordinates[j][0]), float(all_coordinates[j][1])])
+
+		bike_travel_times = []
+		for i in range (0,len(coord_origins),10):
+			bike_travel_times = bike_travel_times + bike_travel_time(coord_origins[i:i+10], coord_destinations[i:i+10])
+
+		for i in range (0,len(bike_travel_times)):
+			bike_coord_pair_time_dict[coord_keys[i]] = bike_travel_times[i]
+
+	# print(bike_travel_times)
+	# print(bike_coord_pair_time_dict)
+	print("Bike")
+
+	# CAR TRAVEL TIME
+	if travel_means[2]:
+		# coord_keys = []
+		# coord_origins = []
+		# coord_destinations = []
+		# coord_value = []
+		# for i in range(0,len(all_coordinates)-1):
+		# 	for j in range(i+1,len(all_coordinates)):
+		# 		coordinate_pair = str(all_coordinates[i]) + ' ' + str(all_coordinates[j])
+		# 		coord_keys.append(coordinate_pair)
+		# 		coord_origins.append([float(all_coordinates[i][0]), float(all_coordinates[i][1])])
+		# 		coord_destinations.append([float(all_coordinates[j][0]), float(all_coordinates[j][1])])
+
+		car_travel_times = []
+		for i in range (0,len(coord_origins),10):
+			car_travel_times = car_travel_times + car_travel_time(coord_origins[i:i+10], coord_destinations[i:i+10])
+
+		for i in range (0,len(car_travel_times)):
+			car_coord_pair_time_dict[coord_keys[i]] = car_travel_times[i]
+
+	print("car")
+
 
 	# LYFT WAIT TIME 
 	if travel_means[4]:
@@ -81,6 +151,15 @@ def generate_min_travel_times(current_epoch_time, all_coordinates, travel_means)
 
 		pool = Pool(processes=64)
 		pool.map(lyft_travel_time_helper, lyft_coord_pairs)
+
+	# BART TRAVEL TIME
+	if travel_means[5]:
+		for i in range(0,len(bart_station_coordinates)-1):
+			for j in range(i+1, len(bart_station_coordinates)):
+				bart_coord_pair_str = NODES[i+1] + ' ' + NODES[j+1]
+				bart_coord_pairs.append([bart_travel_time, bart_coord_pair_str, NODES[i+1], NODES[j+1]])
+		pool = Pool(processes=12)  
+		pool.map(bart_travel_time_helper, bart_coord_pairs)
 
 
 
@@ -101,25 +180,23 @@ def generate_min_travel_times(current_epoch_time, all_coordinates, travel_means)
 
 		first_bart_station_departure_times = bart_travel_time[NODES[1] + ' ' + NODES[2]]
 
-		walk_time_to_first_bart = walk_travel_time([[all_coordinates[0][0], all_coordinates[0][1]]], [[bart_coordinates[0][0], bart_coordinates[0][1]]])[0]
+		walk_time_to_first_bart = walk_coord_pair_time_dict[str(all_coordinates[0]) + ' ' + str(bart_coordinates[0])]
 		bike_time_to_first_bart = float("inf")
 		car_time_to_first_bart = float("inf")
 		uber_time_to_first_bart = float("inf")
 		lyft_time_to_first_bart = float("inf")
 
-		car_time = car_travel_time([[all_coordinates[0][0], all_coordinates[0][1]]], [[bart_coordinates[0][0], bart_coordinates[0][1]]])[0]
+		if travel_means[2]:
+			car_time_to_first_bart = car_coord_pair_time_dict[str(all_coordinates[0]) + ' ' + str(bart_coordinates[1])]
 
 		if travel_means[1]:
-			bike_time_to_first_bart = bike_travel_time([[all_coordinates[0][0], all_coordinates[0][1]]], [[bart_coordinates[0][0], bart_coordinates[0][1]]])[0]
-
-		if travel_means[2]:
-			car_time_to_first_bart = car_time
+			bike_time_to_first_bart = bike_coord_pair_time_dict[str(all_coordinates[0]) + ' ' + str(bart_coordinates[0])]
 
 		if travel_means[3]:
-			uber_time_to_first_bart = 5 + car_time
+			uber_time_to_first_bart = 5 + car_time_to_first_bart
 
 		if travel_means[4]:
-			lyft_time_to_first_bart = lyft_travel_time['' + str(all_coordinates[0][0]) + ' ' + str(all_coordinates[0][1])] + car_time
+			lyft_time_to_first_bart = lyft_travel_time['' + str(all_coordinates[0][0]) + ' ' + str(all_coordinates[0][1])] + car_time_to_first_bart
 
 		first_bart_time = float("inf")
 
@@ -152,17 +229,17 @@ def generate_min_travel_times(current_epoch_time, all_coordinates, travel_means)
 
 		for key in bart_coordinate_dict.keys():
 			bart_coordinate_pairs = bart_coordinate_dict[key]
-			car_time = car_travel_time([[bart_coordinate_pairs[0][0], bart_coordinate_pairs[0][1]]], [[bart_coordinate_pairs[1][0], bart_coordinate_pairs[1][1]]])[0]
-		
+			
+			car_time = float("inf")
 			uber_time = float("inf")
 			lyft_time = float("inf")
 
+			if travel_means[2]:
+				car_time = car_coord_pair_time_dict[str(bart_coordinate_pairs[0]) + ' ' + str(bart_coordinate_pairs[1])]
 			if travel_means[3]:
 				uber_time = car_time + 5
 			if travel_means[4]:
-
-				azaaas = str(bart_coordinate_pairs[0][0]) + ' ' + str(bart_coordinate_pairs[0][1])
-				lyft_time = lyft_travel_time[azaaas] + car_time
+				lyft_time = lyft_travel_time[str(bart_coordinate_pairs[0][0]) + ' ' + str(bart_coordinate_pairs[0][1])] + car_time
 
 			bart_time_arr = bart_travel_time[key.split()[0] + ' ' + key.split()[1]]
 			bart_time_diff = bart_time_arr[0][1] - bart_time_arr[0][0]
@@ -186,25 +263,23 @@ def generate_min_travel_times(current_epoch_time, all_coordinates, travel_means)
 			next_coordinate = all_coordinates[i]
 
 			# from start to all upcoming series of coordinates
-			walk_time_from_start = walk_travel_time([[start_coordinate[0], start_coordinate[1]]], [[next_coordinate[0], next_coordinate[1]]])[0]
+			walk_time_from_start = walk_coord_pair_time_dict[str(start_coordinate) + ' ' + str(next_coordinate)]
 			bike_time_from_start = float("inf")
 			car_time_from_start = float("inf")
 			uber_time_from_start = float("inf")
 			lyft_time_from_start = float("inf")
 
-			car_time = car_travel_time([[all_coordinates[0][0], all_coordinates[0][1]]], [[next_coordinate[0], next_coordinate[1]]])[0]
-
 			if travel_means[1]:
-				bike_time_from_start = bike_travel_time([[all_coordinates[0][0], all_coordinates[0][1]]], [[next_coordinate[0], next_coordinate[1]]])[0]
+				bike_time_from_start = bike_coord_pair_time_dict[str(all_coordinates[0]) + ' ' + str(next_coordinate)]
 
 			if travel_means[2]:
-				car_time_from_start = car_time
+				car_time_from_start = car_coord_pair_time_dict[str(all_coordinates[0]) + ' ' + str(next_coordinate)]
 
 			if travel_means[3]:
-				uber_time_from_start = 5 + car_time
+				uber_time_from_start = 5 + car_time_from_start
 
 			if travel_means[4]:
-				lyft_time_from_start = lyft_travel_time[str(start_coordinate[0]) + ' ' + str(start_coordinate[1])] + car_time
+				lyft_time_from_start = lyft_travel_time[str(start_coordinate[0]) + ' ' + str(start_coordinate[1])] + car_time_from_start
 
 			min_travel_time = min([walk_time_from_start, bike_time_from_start, car_time_from_start, uber_time_from_start, lyft_time_from_start])
 
@@ -224,21 +299,23 @@ def generate_min_travel_times(current_epoch_time, all_coordinates, travel_means)
 
 			# from next coordinate to end
 			if i < len(all_coordinates)-1:
-				walk_time_to_end = walk_travel_time([[next_coordinate[0], next_coordinate[1]]], [[end_coordinate[0], end_coordinate[1]]])[0]
+				walk_time_to_end = walk_coord_pair_time_dict[str(next_coordinate) + ' ' + str(end_coordinate)]
 				bike_time_to_end = float("inf")
 				uber_time_to_end = float("inf")
 				lyft_time_to_end = float("inf")
-
-				car_time = car_travel_time([[next_coordinate[0], next_coordinate[1]]], [[end_coordinate[0], end_coordinate[1]]])[0]
+				car_time_to_end = float("inf")
 
 				if travel_means[1]:
-					bike_time_to_end = bike_travel_time([[next_coordinate[0], next_coordinate[1]]], [[end_coordinate[0], end_coordinate[1]]])[0]
+					bike_time_to_end = bike_coord_pair_time_dict[str(next_coordinate) + ' ' + str(end_coordinate)]
+
+				if travel_means[2]:
+					car_time_to_end = car_coord_pair_time_dict[str(next_coordinate) + ' ' + str(end_coordinate)]
 
 				if travel_means[3]:
-					uber_time_to_end = 5 + car_time
+					uber_time_to_end = 5 + car_time_to_end
 
 				if travel_means[4]:
-					lyft_time_to_end = lyft_travel_time[str(next_coordinate[0]) + ' ' + str(next_coordinate[1])] + car_time
+					lyft_time_to_end = lyft_travel_time[str(next_coordinate[0]) + ' ' + str(next_coordinate[1])] + car_time_to_end
 
 
 				min_travel_time = min([walk_time_to_end, bike_time_to_end, uber_time_to_end, lyft_time_to_end])

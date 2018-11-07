@@ -23,10 +23,11 @@ def route():
 		geocodeDest = google_maps_api.geocode(dest)
 
 		results = {'start': start, 'end': dest, 'startLat': geocodeStart[0], 'startLng': geocodeStart[1], 'endLat': geocodeDest[0], 'endLng': geocodeDest[1]}
-		a = time.time()
-		route = calculate_route([results['startLat'],results['startLng']], [results['endLat'],results['endLng']], [1,1,1,1,1,1])
-		b = time.time()
-		print(b-a)
+		# a = time.time()
+		route = calculate_route([results['startLat'],results['startLng']], [results['endLat'],results['endLng']], [1,1,0,0,0,1])
+		# b = time.time()
+		# print(b-a)
+		# route = [1,2,3]
 		return render_template('results.html', results=results, route=route)
 	else:
 		return redirect(url_for('home'))

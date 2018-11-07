@@ -22,17 +22,16 @@
 				</div>
 				<div id="transportation-modes" class="bay-hop"></div>
 				<div id="directions" class="bay-hop">
-					<ol>
-						<li>Open Laptop</li>
-						<li>Go to Gradescope</li>
-						<li>Check Midterm Grades</li>
-						<li>Die a little</li>
-						<li>Open weekly HW</li>
-						<li>Die more</li>
-						<li>Close Laptop</li>
-						<li>Cry yourself to sleep</li>
-						<li>Repeat and season to taste</li>
-					</ol>
+
+					<ul>
+						{% for r in route %}
+					      <li> {{ r }} </li>
+					  {% endfor %}
+					</ul>
+
+
+
+
 				</div>
 			</div>
 		</div>

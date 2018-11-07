@@ -51,7 +51,7 @@ def generate_graph(START_COORDINATES, END_COORDINATES, TRAVEL_MEANS):
 	station_coordinates = get_station_coordinates(stations_between)
 
 	for station_coordinate in station_coordinates:
-		ROUTE_NODES.append(station_coordinate)
+		ROUTE_NODES.append([float(station_coordinate[0]), float(station_coordinate[1])])
 
 	ROUTE_NODES.append(END_COORDINATES)
 
@@ -70,7 +70,7 @@ def process_graph(route_nodes):
 
 
 # a = time.time()
-# print(calculate_route([37.7798, -122.4039], [37.8616, -122.256523],[1,0,1,1,1,1]))
+# print(calculate_route([37.8616, -122.256523], [37.7798, -122.4039],[1,0,0,0,0,1]))
 # b = time.time()
 # print(b-a)
 
