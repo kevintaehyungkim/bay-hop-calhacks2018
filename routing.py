@@ -69,10 +69,10 @@ def process_graph(route_nodes):
 
 
 
-a = time.time()
-print(calculate_route([37.7798, -122.4039], [37.8616, -122.256523],[1,0,1,1,1,1]))
-b = time.time()
-print(b-a)
+# a = time.time()
+# print(calculate_route([37.7798, -122.4039], [37.8616, -122.256523],[1,0,1,1,1,1]))
+# b = time.time()
+# print(b-a)
 
 
 

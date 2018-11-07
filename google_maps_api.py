@@ -45,7 +45,7 @@ def car_travel_time(origins, destinations):
 	query = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + origins_str + "&destinations=" + destinations_str + "&departure_time=now" + "&mode=driving&key=" + GOOGLE_MAPS_API_KEY
 
 	data = json.loads(urllib.request.urlopen(query).read().decode("utf-8"))["rows"]
-
+	print(data)
 	for d in data:
 		# print(d)
 		if "duration_in_traffic" in d["elements"][0].keys():
@@ -122,7 +122,7 @@ def geocode(address):
 
 
 # print(walk_travel_time([[37.8716, -122.258423],[37.8716, -122.258423]], [[37.7798, -122.4039],[37.7798, -122.4039]]))
-print(car_travel_time([[37.8616, -122.256523]], [[37.7798, -122.4039]]))
+# print(car_travel_time([[37.8616, -122.256523]], [[37.7798, -122.4039]]))
 # geocode('Berkeley, CA')
 # print(car_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
 # print(bike_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))

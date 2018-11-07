@@ -41,8 +41,10 @@ def get_nearest_station(latitude, longitude):
 				nearest_station = station["name"]
 				station_abbreviation = station["abbr"]
 				current_shortest_distance = distance
-	except:
+	except Exception as e:
 		print("BART API Request Error")
+		print(e)
+
 
 	return [nearest_station, station_abbreviation]
 
@@ -88,25 +90,29 @@ def get_bart_travel_time(current_date_time, current_epoch_time, start_station_ab
 			bart_epoch = int(time.mktime(time.strptime(bart_date, pattern)))
 
 			if bart_epoch >= current_epoch_time:
-				travel_times_arr.append([bart_ride["@origTimeMin"], bart_ride["@destTimeMin"], ])
+				travel_times_arr.append([bart_ride["@origTimeMin"], bart_ride["@destTimeMin"]])
 
+		# TODO: PM TO AM TIME DIFF
 		for i in range(len(travel_times_arr)):
 			for j in range(len(travel_times_arr[i])):
 				bart_ride_time_split = travel_times_arr[i][j].split()
-				print(bart_ride_time_split)
+				# print(bart_ride_time_split)
 				if bart_ride_time_split[1] == 'PM':
 					bart_ride_time_split = bart_ride_time_split[0].split(':')
 					bart_ride_time_split[0] = str(int(bart_ride_time_split[0]) + 12)
 				else:
 					bart_ride_time_split = bart_ride_time_split[0].split(':')
 
+				# print(bart_ride_time_split)
+
 				bart_date = bart_ride_date + str(bart_ride_time_split[0]) + ':' + str(bart_ride_time_split[1]) + ":" + "00"
 				pattern = '%m/%d/%Y %H:%M:%S'
 				bart_epoch = int(time.mktime(time.strptime(bart_date, pattern)))
 
 				travel_times_arr[i][j] = bart_epoch
-	except:
+	except Exception as e:
 		print("BART API Request Error")
+		print(e)
 
 	return travel_times_arr
 
@@ -168,8 +174,9 @@ def get_stations_between(start_station, dest_station):
 
 		return min(all_routes)
 
-	except:
+	except Exception as e:
 		print("BART API Request Error")
+		print(e)
 
 	return all_routes
 
