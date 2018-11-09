@@ -1,8 +1,12 @@
 import json
 import urllib
 import googlemaps
+import multiprocessing as mp
 from datetime import datetime
 from configparser import SafeConfigParser
+
+import grequests
+import time
 
 config_parser = SafeConfigParser()
 config_parser.read('api_keys.cfg')
@@ -12,51 +16,15 @@ GOOGLE_MAPS_API_KEY = config_parser.get('GoogleMapsAPI', 'key')
 gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
 
 
-# def parseEpoch(text):
-# 		parts = text.split(' ')
-# 		time = 0
-# 		if len(parts) == 4:
-# 			time += int(parts[0]) * 60 * 60
-# 			time += int(parts[2]) * 60
-# 		elif len(parts) == 2:
-# 			time += int(parts[0]) * 60
-# 		else:
-# 			raise Exception('text parsing failed')
-# 		return time
+def travel_time(modes, origins, destinations):
 
-
-# Travel time from origins to destinations via car
-# origins/destinations are arrays of tuples of latitude/longitude pairs
-def car_travel_time(origins, destinations):
+	urls = []
+	transportation_modes = ['walking', 'bicycling', 'driving']
+	total = {}
 
 	origins_str = ""
 	destinations_str = ""
-	car_travel_time_arr = []
-
-	for origin in origins:
-		origins_str += str(origin[0]) + "," + str(origin[1]) + "|"
-
-	for destination in destinations:
-		destinations_str += "" + str(destination[0]) + "," + str(destination[1]) + "|"
-
-	origins_str = origins_str[:-1]
-	destinations_str = destinations_str[:-1]
-
-	query = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + origins_str + "&destinations=" + destinations_str + "&departure_time=now" + "&mode=driving&key=" + GOOGLE_MAPS_API_KEY
-	# print(query)
-	data = json.loads(urllib.request.urlopen(query).read().decode("utf-8"))["rows"][0]["elements"]
-	for d in data:
-		car_travel_time_arr.append(d["duration_in_traffic"]["value"])
-
-	return car_travel_time_arr
-
-
-# Travel time from origins to destinations via biking
-# origins/destinations are arrays of tuples of latitude/longitude pairs
-def bike_travel_time(origins, destinations):
-	origins_str = ""
-	destinations_str = ""
-	bike_travel_time_arr = []
+	travel_time_arr = []
 
 	for origin in origins:
 		origins_str += "" + str(origin[0]) + "," + str(origin[1]) + "|"
@@ -67,40 +35,37 @@ def bike_travel_time(origins, destinations):
 	origins_str = origins_str[:-1]
 	destinations_str = destinations_str[:-1]
 
-	query = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + origins_str + "&destinations=" + destinations_str + "&mode=bicycling&key=" + GOOGLE_MAPS_API_KEY
+	for mode in modes:
+		travel_mode = transportation_modes[mode]
+		query = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + origins_str + "&destinations=" + destinations_str + "&mode=" + travel_mode + "&departure_time=now" + "&key=" + GOOGLE_MAPS_API_KEY
+		urls.append(query)
 
-	data = json.loads(urllib.request.urlopen(query).read().decode("utf-8"))["rows"][0]["elements"]
+	travel_data = []
+	pool = mp.Pool(len(modes))
+	travel_data = pool.map(send_request,urls)
 
-	for d in data:
-		bike_travel_time_arr.append(d["duration"]["value"])
+	pool.close()
+	pool.join()
 
-	return bike_travel_time_arr
+	for i in range(len(travel_data)):
+		data = travel_data[i]["rows"]
+		if modes[i] == 2:
+			for row in data:
+				distances = row["elements"]
+				for d in distances:
+					travel_time_arr.append(d["duration_in_traffic"]["value"])
+		else:
+			for row in data:
+				distances = row["elements"]
+				for d in distances:
+					travel_time_arr.append(d["duration"]["value"])
+		total[transportation_modes[i]] = travel_time_arr
+
+	return total
 
 
-# Travel time from origins to destinations via walking
-# origins/destinations are arrays of tuples of latitude/longitude pairs
-def walk_travel_time(origins, destinations):
-	origins_str = ""
-	destinations_str = ""
-	walk_travel_time_arr = []
-
-	for origin in origins:
-		origins_str += "" + str(origin[0]) + "," + str(origin[1]) + "|"
-
-	for destination in destinations:
-		destinations_str += "" + str(destination[0]) + "," + str(destination[1]) + "|"
-
-	origins_str = origins_str[:-1]
-	destinations_str = destinations_str[:-1]
-
-	query = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + origins_str + "&destinations=" + destinations_str + "&mode=walking&key=" + GOOGLE_MAPS_API_KEY
-
-	data = json.loads(urllib.request.urlopen(query).read().decode("utf-8"))["rows"][0]["elements"]
-	
-	for d in data:
-		walk_travel_time_arr.append(d["duration"]["value"])
-
-	return walk_travel_time_arr
+def send_request(url):
+	return grequests.map([grequests.get(url)])[0].json()
 
 def geocode(address):
 	addressparts = address.split(' ')
@@ -115,7 +80,10 @@ def geocode(address):
 
 
 # print(walk_travel_time([[37.7798, -122.4039], [37.7798, -122.4039], [37.7798, -122.4039], [37.7798, -122.4039], [37.7798, -122.4039], [37.7798, -122.4039], [37.7798, -122.4039], [37.7798, -122.4039], [37.7798, -122.4039], [37.7798, -122.4039], [37.784471, -122.407974], [37.784471, -122.407974], [37.784471, -122.407974], [37.784471, -122.407974], [37.784471, -122.407974], [37.784471, -122.407974], [37.784471, -122.407974], [37.784471, -122.407974], [37.784471, -122.407974], [37.789405, -122.401066], [37.789405, -122.401066], [37.789405, -122.401066], [37.789405, -122.401066], [37.789405, -122.401066], [37.789405, -122.401066], [37.789405, -122.401066], [37.789405, -122.401066], [37.792874, -122.39702], [37.792874, -122.39702], [37.792874, -122.39702], [37.792874, -122.39702], [37.792874, -122.39702], [37.792874, -122.39702], [37.792874, -122.39702], [37.804872, -122.29514], [37.804872, -122.29514], [37.804872, -122.29514], [37.804872, -122.29514], [37.804872, -122.29514], [37.804872, -122.29514], [37.803768, -122.27145], [37.803768, -122.27145], [37.803768, -122.27145], [37.803768, -122.27145], [37.803768, -122.27145], [37.80835, -122.268602], [37.80835, -122.268602], [37.80835, -122.268602], [37.80835, -122.268602], [37.829065, -122.26704], [37.829065, -122.26704], [37.829065, -122.26704], [37.852803, -122.270062], [37.852803, -122.270062], [37.870104, -122.268133]], [[37.784471, -122.407974], [37.789405, -122.401066], [37.792874, -122.39702], [37.804872, -122.29514], [37.803768, -122.27145], [37.80835, -122.268602], [37.829065, -122.26704], [37.852803, -122.270062], [37.870104, -122.268133], [37.8616, -122.256523], [37.789405, -122.401066], [37.792874, -122.39702], [37.804872, -122.29514], [37.803768, -122.27145], [37.80835, -122.268602], [37.829065, -122.26704], [37.852803, -122.270062], [37.870104, -122.268133], [37.8616, -122.256523], [37.792874, -122.39702], [37.804872, -122.29514], [37.803768, -122.27145], [37.80835, -122.268602], [37.829065, -122.26704], [37.852803, -122.270062], [37.870104, -122.268133], [37.8616, -122.256523], [37.804872, -122.29514], [37.803768, -122.27145], [37.80835, -122.268602], [37.829065, -122.26704], [37.852803, -122.270062], [37.870104, -122.268133], [37.8616, -122.256523], [37.803768, -122.27145], [37.80835, -122.268602], [37.829065, -122.26704], [37.852803, -122.270062], [37.870104, -122.268133], [37.8616, -122.256523], [37.80835, -122.268602], [37.829065, -122.26704], [37.852803, -122.270062], [37.870104, -122.268133], [37.8616, -122.256523], [37.829065, -122.26704], [37.852803, -122.270062], [37.870104, -122.268133], [37.8616, -122.256523], [37.852803, -122.270062], [37.870104, -122.268133], [37.8616, -122.256523], [37.870104, -122.268133], [37.8616, -122.256523], [37.8616, -122.256523]]))
-# print(car_travel_time([[37.8616, -122.256523]], [[37.7798, -122.4039]]))
+
+# embarcadero to 923 folsom walk
+# print(walk_travel_time([[37.7929, -122.3971]],[[37.7798, -122.4039]]))
+
 # geocode('Berkeley, CA')
 # print(car_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
 # print(bike_travel_time([37.8716, -122.258423], [37.7798, -122.4039]))
@@ -129,6 +97,9 @@ def geocode(address):
 # driving_time = result['rows'][0]['elements'][0]['duration']['value']
 
 # print(driving_time)
+
+
+
 
 
 

@@ -22,15 +22,7 @@
 				</div>
 				<div id="transportation-modes" class="bay-hop"></div>
 				<div id="directions" class="bay-hop">
-
-					<ul>
-						{% for r in route %}
-					      <li> {{ r }} </li>
-					  {% endfor %}
-					</ul>
-
-
-
+					<p>{{ route }}</p>
 
 				</div>
 			</div>
@@ -67,15 +59,12 @@
 			bounds.extend(dmarker.getPosition());
 
 			map.fitBounds(bounds);
-
 		}    
-
-
 	</script>
 
      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGPqfNcowbyMyUwhF9YNxL2qU4GdnpVwg&libraries=places&callback=initMap"
-        async defer></script>
+        async defer>
+    </script>
 
 </body>	
-
 </html>
