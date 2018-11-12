@@ -7,28 +7,50 @@
     <!-- <link href="../static/styles/home.css" type="text/css" rel="stylesheet"> -->
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='styles/results.css') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <body>
 	<div id="header" class="bay-hop">
-		<h1>Bay Hop</h1>
+		<img src ="/static/images/Logo.png" height="90" alt="BayHop Logo">
+		<h2>Bay Area Travel Made Fast and Simple</h2>
 	</div>
+
 	<div id="content" class="bay-hop">
+
 		<div id="results" class="bay-hop">
+			
 			<div id="results-wrapper">
 				<div id="addresses" class="bay-hop">
-					<input type='text' value="{{results.start}}"></input> <br>
-					<input type='text' value="{{results.end}}"></input>
+					<form class="form-signin">
+						<input type='text' class="form-control" value="{{results.start}}"></input> 
+						<br>
+						<input type='text' class="form-control" value="{{results.end}}"></input>
+					</form>
 				</div>
-				<div id="transportation-modes" class="bay-hop"></div>
-				<div id="directions" class="bay-hop">
-					<p>{{ route }}</p>
 
+				<div id="directions" class="bay-hop" style="display:inline;">
+					<h3>{{route_info[0][0]}} Hours and {{route_info[0][1]}} Minutes</h3>
+					<br>
+					{% for node in route_info[1] %}
+						{% if node[2] == 'W' %}
+							<h4><img src ="/static/images/Walk.png" height="30" align="left" alt="BayHop Logo">{{node[0]}} -> {{node[1]}}</h4>
+							<br>
+						{% elif node[2] == 'B' %}
+							<h4><img src ="/static/images/Bart.png" height="30" align="left" alt="BayHop Logo">{{node[0]}} -> {{node[1]}}</h4>
+							<br>
+						{% endif %}
+					{% endfor %}
 				</div>
 			</div>
 		</div>
+
 		<div id="map" class="bay-hop"></div>
+
 	</div>
+<!-- 
+	<div id="map" class="bay-hop"></div> -->
 
 
 	<script>
@@ -62,7 +84,7 @@
 		}    
 	</script>
 
-     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGPqfNcowbyMyUwhF9YNxL2qU4GdnpVwg&libraries=places&callback=initMap"
+     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5_ShaibPjbrctDcI8vXgDUtI3ua-E814&libraries=places&callback=initMap"
         async defer>
     </script>
 

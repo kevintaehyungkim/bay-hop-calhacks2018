@@ -19,16 +19,22 @@ def route():
 		form = request.form
 		start = form['start']
 		dest = form['destination']
-		geocodeStart = google_maps_api.geocode(start)
-		geocodeDest = google_maps_api.geocode(dest)
+		geocode_start_dest = google_maps_api.geocode([start, dest])
+		geocode_start = geocode_start_dest[0]
+		geocode_dest = geocode_start_dest[1]
 
-		results = {'start': start, 'end': dest, 'startLat': geocodeStart[0], 'startLng': geocodeStart[1], 'endLat': geocodeDest[0], 'endLng': geocodeDest[1]}
-		# a = time.time()
-		route = calculate_route([results['startLat'],results['startLng']], [results['endLat'],results['endLng']], [1,1,1,1,1,1])
-		# b = time.time()
-		# print(b-a)
-		# route = [1,2,3]
-		return render_template('results.html', results=results, route=route)
+		results = {'start': start, 'end': dest, 'startLat': geocode_start[0], 'startLng': geocode_start[1], 'endLat': geocode_dest[0], 'endLng': geocode_dest[1]}
+		route_info = generate_graph([results['startLat'],results['startLng']], [results['endLat'],results['endLng']], [0,0,0,0,1])
+
+		# [[0, 59], [['S', 'Powell St.', 'W'], ['Powell St.', '12th St. Oakland City Center', 'B'], ['12th St. Oakland City Center', 'Downtown Berkeley', 'B'], ['Downtown Berkeley', 'E', 'W']]]
+
+
+		
+		route_nodes = route_info[1]
+		route_nodes[0][0] = form['start']
+		route_nodes[len(route_nodes)-1][1] = form['destination']
+
+		return render_template('results.html', results=results, route_info=route_info)
 	else:
 		return redirect(url_for('home'))
 
@@ -37,17 +43,3 @@ if __name__ == '__main__':
    app.run()
 
 
-
-
-# TAKE OUT BUS, NODE COMPLEXITY
-# CALL API every time for each node, a lot of computing power
-
-# MULTIPLE NODES FOR EACH BART STATION BASED ON TIME, ex. can't make bart in 3 minutes because 5 min walk, but taking bart ultimately faster than uber across bridge
-# LIMIT 3 next bart rides
-# EACH NODE HAS A CATEGORY(TYPE) - identifier to plan directed edges from this node to the next during generation
-
-# https://www.gps-coordinates.net/
-# https://www.gps-coordinates.net/api
-
-# CAR -> BART -> CAR X
-# BIKE -> CAR/UBER X

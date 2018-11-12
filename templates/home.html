@@ -28,7 +28,7 @@
   <div id="title" class="container">
       <div class="row center">
           <img src ="/static/images/Logo.png" alt="BayHop Logo">
-          <h2>Bay Area Commuting Made Fast and Simple</h2>
+          <h2>Bay Area Travel Made Fast and Simple</h2>
       </div>
   </div>
 
@@ -39,7 +39,8 @@
                     <!-- <label><b>Start</b></label>  -->
                     <input id="startTextField" name='start' class="form-control" placeholder="Start Location" required autofocus>
                     <!-- <button id="cloc" onclick="setToCurrentPosition()">Current Location</button> -->
-                    <br></br>
+                    <br>                    
+                    <!-- <br> -->
                     <!-- <label><b>Destination</b></label> -->
                     <input id="destinationTextField" name='destination' class="form-control" placeholder="Destination Location" required>
                     <br></br>
@@ -57,13 +58,6 @@
                 </form>
             </div>
             <br></br>
-<!-- 
-            <div class="flashes">
-              {% for message in get_flashed_messages() %}
-                <h4>{{ message }}</h4>
-              {% endfor %}
-            </div> -->
-
         </div>
     </form>
 
@@ -148,7 +142,7 @@
 
         <!-- https://developers.google.com/maps/documentation/javascript/places-autocomplete -->
 
-     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGPqfNcowbyMyUwhF9YNxL2qU4GdnpVwg&libraries=places&callback=initMap"
+     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5_ShaibPjbrctDcI8vXgDUtI3ua-E814&libraries=places&callback=initMap"
         async defer></script>
 
 <!-- https://developers.google.com/maps/documentation/javascript/adding-a-google-map -->

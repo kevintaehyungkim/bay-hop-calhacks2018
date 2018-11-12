@@ -27,7 +27,7 @@ body{
 #title h2 {
 	color: white;
 	font-family: 'Lato';
-	font-size: 18px;
+	font-size: 22px;
 	text-align: center;
 }
 
@@ -49,3 +49,7 @@ button {
     color: white !important;
     font-weight: 400 !important;
 }
+
+/*br {
+    line-height: 0.1px;
+}*/

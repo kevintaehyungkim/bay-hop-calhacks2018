@@ -2,6 +2,7 @@ import json
 import time
 import urllib.request
 import grequests
+import multiprocessing as mp
 from math import sin, cos, sqrt, atan2, radians, inf
 from configparser import SafeConfigParser
 from time import strftime
@@ -9,21 +10,34 @@ from time import strftime
 config_parser = SafeConfigParser()
 config_parser.read('station_info.cfg')
 
-# BART_API_KEY = config_parser.get('BartAPI', 'key')
-RADIUS_EARTH = 6378.137
-BART_STATIONS = json.loads(urllib.request.urlopen("http://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&json=y").read().decode("utf-8"))["root"]["stations"]["station"]
 
+RADIUS_EARTH = 6378.137
+BART_STATIONS = grequests.map([grequests.get("http://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&json=y")])[0].json()["root"]["stations"]["station"]
+
+LINES = []
+k=time.time()
 line_urls = ["http://api.bart.gov/api/route.aspx?cmd=routeinfo&route=1&key=MW9S-E7SL-26DU-VV8V&json=y",
 				"http://api.bart.gov/api/route.aspx?cmd=routeinfo&route=3&key=MW9S-E7SL-26DU-VV8V&json=y",
 				"http://api.bart.gov/api/route.aspx?cmd=routeinfo&route=5&key=MW9S-E7SL-26DU-VV8V&json=y",
 				"http://api.bart.gov/api/route.aspx?cmd=routeinfo&route=7&key=MW9S-E7SL-26DU-VV8V&json=y",
 				"http://api.bart.gov/api/route.aspx?cmd=routeinfo&route=11&key=MW9S-E7SL-26DU-VV8V&json=y"]
-
 responses = [grequests.get(u) for u in line_urls]
-
-LINES = []
 for r in grequests.map(responses):
 	LINES.append(list(r.json()["root"]["routes"]["route"]["config"]["station"]))
+q = time.time()
+print(q-k)
+
+
+# pool = mp.Pool(len(modes))
+# 	travel_data = list(pool.map(send_request,urls))
+
+# 	pool.close()
+# 	pool.join()
+
+# for i in range(len(travel_data)):
+# 	# print(data)
+# 	travel_time_arr = []
+# 	data = travel_data[i]["rows"]
 
 
 # Returns the nearest BART Station given a latitude and longitude
@@ -165,6 +179,9 @@ def get_station_coordinates(stations):
 	
 	return station_coordinate_arr
 
+
+
+
 # return two lists of arrival times
 # def get_arrival_times(current_time, stations):
 # 	arrival_times = [[], []]
@@ -220,6 +237,17 @@ def get_station_coordinates(stations):
 # print (get_station_coordinates(['POWL', 'MONT', 'EMBR', 'WOAK', '12TH', '19TH', 'MCAR', 'ASHB', 'DBRK']))
 
 # get_arrival_times(time.time(), ['POWL', 'MONT', 'EMBR', 'WOAK', '12TH', '19TH', 'MCAR', 'ASHB', 'DBRK'])
+
+
+
+# line_urls = ["http://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&json=y"]
+# responses = [grequests.get(u) for u in line_urls]
+# for r in grequests.map(responses):
+# 	for station in (list(r.json()["root"]["stations"]["station"])):
+# 		print("[" + station["abbr"] + "]")
+# 		print("name: " + station["name"])
+# 		print("\n")
+
 
 
 
