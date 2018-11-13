@@ -324,7 +324,7 @@ def generate_min_travel_times(current_epoch_time, all_coordinates, route_nodes, 
 			min_travel_time_dict[key_pair] = [min_travel_time, 'W']
 
 
-	# print (min_travel_time_dict)
+	print (min_travel_time_dict)
 	return min_travel_time_dict
 
 

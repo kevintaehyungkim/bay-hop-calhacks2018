@@ -15,6 +15,15 @@ GOOGLE_MAPS_API_KEY = config_parser.get('GoogleMapsAPI', 'key')
 gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
 
 
+# def travel_distance(coords):
+# 	distance = 0
+# 	query = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + origins_str + "&destinations=" + destinations_str + "&mode=" + travel_mode + "&departure_time=now" + "&key=" + GOOGLE_MAPS_API_KEY
+# 	responses = [grequests.get(u) for u in urls]
+
+# 	for r in grequests.map(responses):
+# 		upcoming_bart_rides = r.json()["rows"]["elements"]["distance"]
+# 		travel_times_arr.append(upcoming_bart_rides[0]["@origin"] + ' ' + upcoming_bart_rides[0]["@destination"])
+
 def travel_time(modes, coords):
 
 	print(coords)

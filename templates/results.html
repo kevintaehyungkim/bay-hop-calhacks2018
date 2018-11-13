@@ -1,7 +1,7 @@
 <html lang="en">
 
 <head>
-    <title>Bay Hopper</title>
+    <title>Bay Hop</title>
     <!-- <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet"> -->
     <!-- <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet"> -->
     <!-- <link href="../static/styles/home.css" type="text/css" rel="stylesheet"> -->
@@ -20,9 +20,8 @@
 	<div id="content" class="bay-hop">
 
 		<div id="results" class="bay-hop">
-			
-			<div id="results-wrapper">
-				<div id="addresses" class="bay-hop">
+
+			<div id="addresses" class="bay-hop">
 					<form class="form-signin">
 						<input type='text' class="form-control" value="{{results.start}}"></input> 
 						<br>
@@ -30,15 +29,35 @@
 					</form>
 				</div>
 
+			<div id="results-wrapper">
+
+				<div id="transportation-modes" class="bay-hop"></div>
 				<div id="directions" class="bay-hop" style="display:inline;">
-					<h3>{{route_info[0][0]}} Hours and {{route_info[0][1]}} Minutes</h3>
+					{% if route_info[0][0][0] == 0 %}
+						<h3>{{route_info[0][0][1]}} Minutes ({{route_info[0][1]}} miles) 
+							<img src ="/static/images/Walk.png" background-color: rgba(142, 141, 171, 0.4); height="32" align="right" alt="BayHop Logo">
+							<img src ="/static/images/Car.png" background-color: rgba(142, 141, 171, 0.4); height="32" align="right" alt="BayHop Logo">
+							<img src ="/static/images/Uber.png" background-color: rgba(142, 141, 171, 0.4); height="32" align="right" alt="BayHop Logo">
+							<img src ="/static/images/Bart.png" background-color: rgba(142, 141, 171, 0.4); height="32" align="right" alt="BayHop Logo"></h3>
+					{% elif route_info[0][0][1] == 0 %}
+						<h3>{{route_info[0][0][0]}} Hours ({{route_info[0][1]}} miles) </h3>
+					{% else %}
+						<h3>{{route_info[0][0][0]}} Hours and {{route_info[0][0][1]}} Minutes ({{route_info[0][1]}} miles) 
+							<img src ="/static/images/Walk.png" height="32" align="left" alt="BayHop Logo" style="PADDING-LEFT: 15px;"></h3>
+					{% endif %}
 					<br>
 					{% for node in route_info[1] %}
 						{% if node[2] == 'W' %}
-							<h4><img src ="/static/images/Walk.png" height="30" align="left" alt="BayHop Logo">{{node[0]}} -> {{node[1]}}</h4>
+							<h4><img src ="/static/images/Walk.png" height="32" align="left" alt="BayHop Logo" style="PADDING-RIGHT: 15px;">{{node[0]}} -> {{node[1]}}</h4>
 							<br>
 						{% elif node[2] == 'B' %}
-							<h4><img src ="/static/images/Bart.png" height="30" align="left" alt="BayHop Logo">{{node[0]}} -> {{node[1]}}</h4>
+							<h4><img src ="/static/images/Bart.png" height="32" align="left" alt="BayHop Logo" style="PADDING-RIGHT: 15px;">{{node[0]}} -> {{node[1]}}</h4>
+							<br>
+						{% elif node[2] == 'C' %}
+							<h4><img src ="/static/images/Car.png" height="32" align="left" alt="BayHop Logo" style="PADDING-RIGHT: 15px;">{{node[0]}} -> {{node[1]}}</h4>
+							<br>
+						{% elif node[2] == 'U' %}
+							<h4><img src ="/static/images/Uber.png" height="32" align="left" alt="BayHop Logo" style="PADDING-RIGHT: 15px;">{{node[0]}} -> {{node[1]}}</h4>
 							<br>
 						{% endif %}
 					{% endfor %}

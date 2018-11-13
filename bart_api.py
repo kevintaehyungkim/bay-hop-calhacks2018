@@ -98,13 +98,15 @@ def get_bart_travel_time(current_date_time, current_epoch_time, start_station_ab
 		for bart_ride in upcoming_bart_rides:
 			bart_ride_time = bart_ride["@origTimeMin"]
 			bart_ride_date = bart_ride["@origTimeDate"]
+			print(bart_ride["@destTimeMin"])
+			print(bart_ride["@destTimeDate"])
 
 			pattern = '%m/%d/%Y %I:%M %p'
 			bart_epoch = int(time.mktime(time.strptime(bart_ride_date + ' ' + bart_ride_time, pattern)))
 
 			if bart_epoch > current_epoch_time:
 				travel_times_arr.append([int(time.mktime(time.strptime(bart_ride_date + ' ' + bart_ride_time, pattern))), 
-					int(time.mktime(time.strptime(bart_ride_date + ' ' + bart_ride["@destTimeMin"], pattern)))])
+					int(time.mktime(time.strptime(bart_ride["@destTimeDate"] + ' ' + bart_ride["@destTimeMin"], pattern)))])
 
 		total[travel_times_arr[0]] = travel_times_arr[1:]
 

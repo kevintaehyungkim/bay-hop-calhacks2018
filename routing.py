@@ -92,6 +92,8 @@ def process_graph(route_nodes):
 				processed_route[i] = [config_parser.get(node_pair[0],'name'), 'E', processed_route[i][1]]
 			else:
 				processed_route[i] = [config_parser.get(node_pair[0],'name'), config_parser.get(node_pair[1],'name'), processed_route[i][1]]
+	else:
+		processed_route[0] = ['S', 'E', processed_route[0][1]]
 
 	trip_info.append(processed_route)
 
@@ -104,7 +106,7 @@ def process_graph(route_nodes):
 
 
 # a = time.time()
-# generate_graph([37.7798, -122.4039], [37.8719, -122.2585],[1,0,0,0,1])
+# generate_graph([37.7798, -122.4039], [37.8638745,-122.2593799],[1,0,0,0,1])
 # b=time.time()
 # print("Total: ", b-a, "seconds")
 
