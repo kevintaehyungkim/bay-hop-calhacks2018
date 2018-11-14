@@ -60,6 +60,7 @@ body {
 p {
 	color: white;
 	font-family: 'Lato';
+	font-size: 10px;
 }
 
 /*br {
@@ -77,6 +78,7 @@ p {
 	color: white;
 	font-family: 'Lato';
 	font-size: 16px;
+	line-height: 26px;
 }
 
 #header h2 {
