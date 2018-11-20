@@ -36,7 +36,26 @@ body{
 	position: absolute;
 	left: 450px;
 	right: 450px;
-	top: 305px;
+	top: 280px;
+}
+
+#transportation .btn {
+    /*background-image: url(/images/buttons/add.png); /* 16px x 16px */*/
+    background-color: transparent; /* make the button transparent */
+    background-repeat: no-repeat;  /* make the background image appear only once */
+    background-position: 0px 0px;  /* equivalent to 'top left' */
+    border: none;           /* assuming we don't want any borders */
+    cursor: pointer;        /* make the cursor like hovering over an <a> element */
+    height: 46px;           /* make this the size of your image */
+    /*padding-left: 12px;      make text start to the right of the image */
+    vertical-align: middle; /* align the text vertically centered */
+    background-color: rgba(142, 141, 171, 0.4);
+    color: white !important;
+}
+
+#transportation .btn:hover {
+    background-color: rgba(93, 110, 167, 0.4);
+    color: white !important;
 }
 
 /*#route {
@@ -45,9 +64,13 @@ body{
 */
 
 button {
-    background-color: #70D8CB; /* Green */
+    background-color: #70D8CB;
     color: white !important;
     font-weight: 400 !important;
+}
+
+button:hover {
+    background-color: #89CACA;
 }
 
 /*br {

@@ -35,10 +35,12 @@
 				<div id="directions" class="bay-hop" style="display:inline;">
 					{% if route_info[0][0][0] == 0 %}
 						<h3>{{route_info[0][0][1]}} Minutes ({{route_info[0][1]}} miles) 
-							<img src ="/static/images/Walk.png" background-color: rgba(142, 141, 171, 0.4); height="32" align="right" alt="BayHop Logo">
-							<img src ="/static/images/Car.png" background-color: rgba(142, 141, 171, 0.4); height="32" align="right" alt="BayHop Logo">
-							<img src ="/static/images/Uber.png" background-color: rgba(142, 141, 171, 0.4); height="32" align="right" alt="BayHop Logo">
-							<img src ="/static/images/Bart.png" background-color: rgba(142, 141, 171, 0.4); height="32" align="right" alt="BayHop Logo"></h3>
+							<img src ="/static/images/Walk.png" background-color: rgba(142, 141, 171, 0.4); height="30" align="right" alt="BayHop Logo">
+							<img src ="/static/images/Bike.png" background-color: rgba(142, 141, 171, 0.4); height="30" align="right" alt="BayHop Logo">
+							<img src ="/static/images/Car.png" background-color: rgba(142, 141, 171, 0.4); height="30" align="right" alt="BayHop Logo">
+							<img src ="/static/images/Uber.png" background-color: rgba(142, 141, 171, 0.4); height="30" align="right" alt="BayHop Logo">
+							<img src ="/static/images/Lyft.png" background-color: rgba(142, 141, 171, 0.4); height="30" align="right" alt="BayHop Logo">
+							<img src ="/static/images/Bart.png" background-color: rgba(142, 141, 171, 0.4); height="30" align="right" alt="BayHop Logo"></h3>
 					{% elif route_info[0][0][1] == 0 %}
 						<h3>{{route_info[0][0][0]}} Hours ({{route_info[0][1]}} miles) </h3>
 					{% else %}
@@ -49,6 +51,9 @@
 					{% for node in route_info[1] %}
 						{% if node[2] == 'W' %}
 							<h4><img src ="/static/images/Walk.png" height="28" align="left" alt="BayHop Logo" style="PADDING-RIGHT: 15px;">{{node[0]}} -> {{node[1]}}</h4>
+							<!-- <br> -->
+						{% elif node[2] == 'BK' %}
+							<h4><img src ="/static/images/Bike.png" height="28" align="left" alt="BayHop Logo" style="PADDING-RIGHT: 15px;">{{node[0]}} -> {{node[1]}}</h4>
 							<!-- <br> -->
 						{% elif node[2] == 'B' %}
 							<h4><img src ="/static/images/Bart.png" height="28" align="left" alt="BayHop Logo" style="PADDING-RIGHT: 15px;">{{node[0]}} -> {{node[1]}}</h4>
